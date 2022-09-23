@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # 한글 깨짐 방지
 import sys
 import io
@@ -16,6 +15,9 @@ pw = ''
 
 # webdriver 객체 생성(chrome 창이 뜨지 않도록 옵션 부여)
 options = webdriver.ChromeOptions()
+'''
+크롬창 보면서 작업하려면 아래 주석( options.add_argument('headless')에 있는거 ) 삭제하세요.
+'''
 # options.add_argument('headless')
 browser = webdriver.Chrome(options=options)
 

@@ -12,8 +12,8 @@ from selenium.webdriver.support import expected_conditions as EC
 # 테스트할 때 KLAS id와 pw를 입력하세요.
 # 깃허브 올릴 때, id,pw 꼭 지우고 업로드!!!  
 url = "https://klas.kw.ac.kr/"
-id = '2017203088'
-pw = 'dldbstls1!'
+id = ''
+pw = ''
 
 '''
 창을 띄우지 않으려면 아래 # options.add_argument('headless') 코드의 주석을 해제하면 됩니다.

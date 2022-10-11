@@ -9,10 +9,18 @@ sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding = 'utf-8')
 # chrome 105.0.5195.127
 
 from scraping import *
+from displaying import *
 
-browser = accese_klas()
+#사용자로부터 id,pw를 받아온다.
+id = 0
+pw =''
 
-# 과목명 list를 가져와서 출력한다.
-subject_list = scrape_subjectName(browser)
-print(subject_list)
+id,pw = getIdPw()
+
+if(id != 0 and pw != ''):
+    browser = accese_klas(id,pw)
+
+    # 과목명 list를 가져와서 출력한다.
+    subject_list = scrape_subjectName(browser)
+    print(subject_list)
 

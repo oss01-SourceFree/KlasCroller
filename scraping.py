@@ -12,8 +12,6 @@ from selenium.webdriver.support import expected_conditions as EC
 # 테스트할 때 KLAS id와 pw를 입력하세요.
 # 깃허브 올릴 때, id,pw 꼭 지우고 업로드!!!  
 url = "https://klas.kw.ac.kr/"
-id = ''
-pw = ''
 
 '''
 창을 띄우지 않으려면 아래 # options.add_argument('headless') 코드의 주석을 해제하면 됩니다.
@@ -25,11 +23,11 @@ options = webdriver.ChromeOptions()
 # 좌측에 탐색기에서 chromedriver.exe 위에 커서를 두고 오른쪽 키를 누루면 [경로복사] 가 있습니다.
 # 해당 경로를 아래 chromedriver_path 에 저장하세요.
 # (단, \ 를 /로 바꿔야 합니다.)
-chromedriver_path = "C:/Users/2youn/Desktop/OSS_cpy/KlasCroller/chromedriver.exe"
+chromedriver_path = "C:/Users/2youn/Desktop/test/KlasCroller/chromedriver.exe"
 browser = webdriver.Chrome(chromedriver_path ,options=options)
 
 # Klas 를 열고, 로그인을 수행하는 함수
-def accese_klas():
+def accese_klas(id,pw):
     # 1. chrome창을 띄어, klas로 이동 
     browser.get(url)
     # 2. id, pw 입력

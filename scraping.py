@@ -5,12 +5,12 @@ sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding = 'utf-8')
 sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding = 'utf-8')
 
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import Select
 
-# 테스트할 때 KLAS id와 pw를 입력하세요.
-# 깃허브 올릴 때, id,pw 꼭 지우고 업로드!!!  
 url = "https://klas.kw.ac.kr/"
 
 '''
@@ -19,12 +19,7 @@ url = "https://klas.kw.ac.kr/"
 options = webdriver.ChromeOptions()
 # options.add_argument('headless')
 
-
-# 좌측에 탐색기에서 chromedriver.exe 위에 커서를 두고 오른쪽 키를 누루면 [경로복사] 가 있습니다.
-# 해당 경로를 아래 chromedriver_path 에 저장하세요.
-# (단, \ 를 /로 바꿔야 합니다.)
-chromedriver_path = "C:/Users/2youn/Desktop/test/KlasCroller/chromedriver.exe"
-browser = webdriver.Chrome(chromedriver_path ,options=options)
+browser = webdriver.Chrome(ChromeDriverManager().install(),options=options)
 
 # Klas 를 열고, 로그인을 수행하는 함수
 def accese_klas(id,pw):

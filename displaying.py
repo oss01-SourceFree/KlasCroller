@@ -1,10 +1,11 @@
 from tkinter import *
 
 class WindowManager():
-    def __init__(self):
+    def __init__(self, sem):
         self.id = 0;
         self.pw = '';
         self.win = Tk()
+        self.sem_list = sem
         
         # label
         self.label = [_ for _ in range(10)]
@@ -57,6 +58,26 @@ class WindowManager():
         # 로그인 버튼 설정
         self.button[0].config(text="로그인",width=5,command=self.LoginEventHandler)
 
+    # 두번째 기능선택 창 구현
+    def SetWindowForFunc(self):
+        self.win_func = Tk()
+        self.win_func.title("Klas function")
+        self.win_func.geometry("400x300")
+        self.win_func.option_add("*Font", "맑은고딕 25")
+        self.label1 = Label(self.win_func, text = '기능 선택')
+        self.label1.pack()
+
+        # 기능 선택 버튼
+        self.b1 = Button(self.win_func, text = "현재 학기 분석하기", command = self.FuncEventHandler1)
+        self.b2 = Button(self.win_func, text = "학기 간 비교 분석하기", command = self.FuncEventHandler2)
+        self.b3 = Button(self.win_func, text = "현재 학기 학점 예측하기", command = self.FuncEventHandler3)
+        self.b1.pack()
+        self.b2.pack()
+        self.b3.pack()
+
+
+
+
     # 로그인 용 Window 열기
     def OpenWindowForLogin(self):
         self.SetWindowForLogin()
@@ -74,10 +95,108 @@ class WindowManager():
         self.id = self.entry[0].get()
         self.pw = self.entry[1].get()
         self.win.destroy()
+
+        self.SetWindowForFunc()
+
+    # 첫번째 기능 선택 이벤트 핸들러(현재 학기 분석하기)
+    def FuncEventHandler1(self):
         
+        self.win_sem1 = Tk()
+        self.win_sem1.title("Klas semester1")
+        self.win_sem1.geometry("400x300")
+        self.win_sem1.option_add("*Font", "맑은고딕 25")
+        self.label1 = Label(self.win_sem1, text = "현재 학기 분석하기")
+        self.label1.pack()
+
+        # 학기 선택 버튼
+        for i in range(len(self.sem_list)-1):
+            if i == 0:
+                self.b1 = Button(self.win_sem1, text = self.sem_list[0], command = self.DataEventHandler1)
+                self.b1.pack()
+            elif i == 1:
+                self.b2 = Button(self.win_sem1, text = self.sem_list[1], command = self.DataEventHandler2)
+                self.b2.pack()
+            elif i == 2:
+                self.b3 = Button(self.win_sem1, text = self.sem_list[2], command = self.DataEventHandler3)
+                self.b3.pack()
+            elif i == 3:
+                self.b4 = Button(self.win_sem1, text = self.sem_list[3], command = self.DataEventHandler4)
+                self.b4.pack()
+            elif i == 4:
+                self.b5 = Button(self.win_sem1, text = self.sem_list[4], command = self.DataEventHandler5)
+                self.b5.pack()
+        
+        self.win_sem1.mainloop()
+
+
+    # 두번째 기능 선택 이벤트 핸들러
+    def FuncEventHandler2(self):
+        self.win_sem2 = Tk()
+        self.win_sem2.title("Klas semester2")
+        self.win_sem2.geometry("400x300")
+        self.win_sem2.option_add("*Font", "맑은고딕 25")
+        self.label1 = Label(self.win_sem2, text = "학기 간 비교 분석하기")
+        self.label1.pack()
+
+    # 세번째 기능 선택 이벤트 핸들러
+    def FuncEventHandler3(self):
+        self.win_sem3 = Tk()
+        self.win_sem3.title("Klas semester3")
+        self.win_sem3.geometry("400x300")
+        self.win_sem3.option_add("*Font", "맑은고딕 25")
+        idx = len(self.sem_list)-1
+        self.label1 = Label(self.win_sem3, text = self.sem_list[idx] + "학기 학점 결과보기")
+        self.label1.pack()
+        
+    # 기능선택 창에서 첫번째 학기 선택 이벤트 핸들러
+    def DataEventHandler1(self):
+        self.win_data1 = Tk()
+        self.win_data1.title("Klas data1")
+        self.win_data1.geometry("400x300")
+        self.win_data1.option_add("*Font", "맑은고딕 25")
+        self.label1 = Label(self.win_data1, text = self.sem_list[0] + "학기 분석하기")
+        self.label1.pack()
+
+    # 기능선택 창에서 두번째 학기 선택 이벤트 핸들러
+    def DataEventHandler2(self):
+        self.win_data2 = Tk()
+        self.win_data2.title("Klas data2")
+        self.win_data2.geometry("400x300")
+        self.win_data2.option_add("*Font", "맑은고딕 25")
+        self.label2 = Label(self.win_data2, text = self.sem_list[1] + "학기 분석하기")
+        self.label2.pack()
+
+    # 기능선택 창에서 세번째 학기 선택 이벤트 핸들러
+    def DataEventHandler3(self):
+        self.win_data3 = Tk()
+        self.win_data3.title("Klas data3")
+        self.win_data3.geometry("400x300")
+        self.win_data3.option_add("*Font", "맑은고딕 25")
+        self.label3 = Label(self.win_data3, text = self.sem_list[2] + "학기 분석하기")
+        self.label3.pack()
+
+    # 기능선택 창에서 네번째 학기 선택 이벤트 핸들러
+    def DataEventHandler4(self):
+        self.win_data4 = Tk()
+        self.win_data4.title("Klas data4")
+        self.win_data4.geometry("400x300")
+        self.win_data4.option_add("*Font", "맑은고딕 25")
+        self.label4 = Label(self.win_data4, text = self.sem_list[3] + "학기 분석하기")
+        self.label4.pack()
+
+    # 기능선택 창에서 다번째 학기 선택 이벤트 핸들러
+    def DataEventHandler5(self):
+        self.win_data5 = Tk()
+        self.win_data5.title("Klas data5")
+        self.win_data5.geometry("400x300")
+        self.win_data5.option_add("*Font", "맑은고딕 25")
+        self.label5 = Label(self.win_data5, text = self.sem_list[4] + "학기 분석하기")
+        self.label5.pack()
+
     def GetIdPw(self):
         self.OpenWindowForLogin()
         return self.id,self.pw
+
 
 
 

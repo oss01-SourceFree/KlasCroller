@@ -13,8 +13,11 @@ sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding = 'utf-8')
 from scraping import Scraper
 from displaying import WindowManager
 
+#임의로 설정한 학기 (리스트)
+sem = ["2020-1", "2020-2", "2021-1", "2021-2"]
+
 #사용자로부터 id,pw를 받아온다.
-loginWin = WindowManager();
+loginWin = WindowManager(sem);
 
 id,pw = loginWin.GetIdPw()
 

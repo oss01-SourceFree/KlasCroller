@@ -28,7 +28,7 @@ class Scraper:
         self.browser = webdriver.Chrome(ChromeDriverManager().install(),options=options)
         
         # 화면 전환시 데이터가 바로 로드되지 않아 scraping 되지 않는 문제를 막기위해
-        # scaping 대상 페이지에 도착시 sleep() 사용, 아래 변수는 sleep()에 전달할 아규먼트
+        # scaping 대상 페이지에 도착시 sleep() 사용, 아래 변수는 sleep()에 전달할 인자
         self.sleeping_time = 0.2
     
     def AcceseKlas(self,id,pw):
@@ -40,7 +40,12 @@ class Scraper:
         # 3. 로그인 버튼 클릭
         self.browser.find_element(By.XPATH,"/html/body/div[1]/div/div/div[2]/form/div[2]/button").click()
         
+
+    def ChangeSemester(self):
+        self.browser.find_element(By.XPATH,"//*[@id=\"appModule\"]/div/div[1]/div[1]/div[1]/select").click()
+        # self.browser.find_element(By.XPATH,"/html/body/main/div/div/div/div/div[1]/div[1]/div[1]/select/option[1]").click()
         
+    
     # 과목명을 가져오는 함수
     def ScrapeSubjectName(self):
         if(not self.WaitPageChange("scheduletitle")):
@@ -56,14 +61,17 @@ class Scraper:
             name = i.text
             semester_list.append(name)
         del semesters
-        
-        
-        # each_subject_list: 과목별 정보
+
+        # each_subject_list: 과목별 정보 (이차원 배열)
+        # [첫번째 과목정보, 두번째 과목정보,…] 순으로 정리되어있다. 
+        each_subject_list = list()
+                
+        # subjects_info: 반환할 결과
         # [수행한 팀플과제 수, 총 팀플과제 수, 
         #  제출한 개인과제 수, 총 개인과제 수,
         #  제출한 퀴즈 수, 총 퀴즈 수,
         #  출석횟수, 결석횟수, 지각횟수] 순으로 정리되어있다. 
-        each_subject_list = list()
+        subjects_info = [0 for _ in range(9)]
         
         subjects = soup.find("ul",{"class":"subjectlist listbox"}).findAll("li")
         for i in range(1,len(subjects)+1):
@@ -73,12 +81,15 @@ class Scraper:
             xpath = "/html/body/main/div/div/div/div/div[1]/div[2]/ul/li["+str(i)+"]"
             each_subject_list.append(self.GetEachSubjectsData(xpath))
         
-                
-        # for i in range(1,len(subjects)+1):
-        #     if subject_list[i] == -1:   #오류가 반환되었을 시, 일단 그냥 패쓰
-        #         continue
-        #     subject_list[i][0]
-    
+        for i in range(len(subjects)):
+            if each_subject_list[i] == -1:   #오류가 반환되었을 시, 일단 그냥 패쓰
+                continue
+            for j in range(9):
+                subjects_info[j] += each_subject_list[i][j]
+        print(each_subject_list)
+        print(subjects_info)
+        
+        
     # 특정 과목의 정보를 반환한다. (팀플, 과제, 퀴즈 참여율, 출석율)
     def GetEachSubjectsData(self, xpath):
         self.browser.find_element(By.XPATH,xpath).click()
@@ -126,42 +137,3 @@ class Scraper:
             return False
         return True
     
-
-
-
-
-# url = "https://klas.kw.ac.kr/"
-
-# '''
-# 창을 띄우지 않으려면 아래 # options.add_argument('headless') 코드의 주석을 해제하면 됩니다.
-# '''
-# options = webdriver.ChromeOptions()
-# # options.add_argument('headless')
-
-# browser = webdriver.Chrome(ChromeDriverManager().install(),options=options)
-
-# # Klas 를 열고, 로그인을 수행하는 함수
-# def accese_klas(id,pw):
-#     # 1. chrome창을 띄어, klas로 이동 
-#     browser.get(url)
-#     # 2. id, pw 입력
-#     browser.find_element(By.ID,"loginId").send_keys(id)
-#     browser.find_element(By.ID,"loginPwd").send_keys(pw)
-#     # 3. 로그인 버튼 클릭
-#     browser.find_element(By.XPATH,"/html/body/div[1]/div/div/div[2]/form/div[2]/button").click()
-    
-#     return browser
-
-# # 과목명을 가져오는 함수
-# def scrape_subjectName(browser):
-#     try:
-#         elem = WebDriverWait(browser,10).until(EC.presence_of_all_elements_located((By.CLASS_NAME,"left")))
-#         subject = list(set([name.text.split()[0] for name in elem]))
-#         for str in subject:
-#             if '-' in str:
-#                 sub_str = str.split('-') 
-#                 if sub_str[0].isdigit() and sub_str[1].isdigit():
-#                     subject.remove(str)
-#         return subject
-#     except:
-#         print('error!')

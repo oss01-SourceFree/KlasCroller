@@ -29,7 +29,12 @@ class Scraper:
         
         # 화면 전환시 데이터가 바로 로드되지 않아 scraping 되지 않는 문제를 막기위해
         # scaping 대상 페이지에 도착시 sleep() 사용, 아래 변수는 sleep()에 전달할 인자
-        self.sleeping_time = 0.2
+        self.sleeping_time = 0.3
+    
+    
+    
+    
+    
     
     def AcceseKlas(self,id,pw):
         # 1. chrome창을 띄어, klas로 이동 
@@ -40,28 +45,30 @@ class Scraper:
         # 3. 로그인 버튼 클릭
         self.browser.find_element(By.XPATH,"/html/body/div[1]/div/div/div[2]/form/div[2]/button").click()
         
-
-    def ChangeSemester(self):
-        self.browser.find_element(By.XPATH,"//*[@id=\"appModule\"]/div/div[1]/div[1]/div[1]/select").click()
-        # self.browser.find_element(By.XPATH,"/html/body/main/div/div/div/div/div[1]/div[1]/div[1]/select/option[1]").click()
         
-    
-    # 과목명을 가져오는 함수
-    def ScrapeSubjectName(self):
+        
+        
+        
+    def ChangeSemester(self, semester_idx):
+        time.sleep(self.sleeping_time)
         if(not self.WaitPageChange("scheduletitle")):
             return 0
+        element_dropdown = self.browser.find_element(By.CLASS_NAME,"form-control.form-control-sm")
+        select_semster = Select(element_dropdown)
+        select_semster.select_by_index(semester_idx)
+        
+        
+        
+        
+        
+        
+    # 특정학기를 입력으로 받아 과목 정보를 가져온다.
+    def ScrapingSubjectData(self,semester_idx):
+        self.ChangeSemester(semester_idx)
         
         html = self.browser.page_source
         soup = BeautifulSoup(html, 'lxml') #html.parser
         
-        # semester_list: 학기 정보
-        semesters = soup.find("select",{"class":"form-control form-control-sm"}).findAll("option")
-        semester_list = []
-        for i in semesters:
-            name = i.text
-            semester_list.append(name)
-        del semesters
-
         # each_subject_list: 과목별 정보 (이차원 배열)
         # [첫번째 과목정보, 두번째 과목정보,…] 순으로 정리되어있다. 
         each_subject_list = list()
@@ -73,11 +80,15 @@ class Scraper:
         #  출석횟수, 결석횟수, 지각횟수] 순으로 정리되어있다. 
         subjects_info = [0 for _ in range(9)]
         
+        # subjects: 특정 학기에 들은 과목들에 정보가 들어있다.    
         subjects = soup.find("ul",{"class":"subjectlist listbox"}).findAll("li")
+        
         for i in range(1,len(subjects)+1):
-            if(not self.WaitPageChange("left")):
-                continue
             time.sleep(self.sleeping_time)
+            if(not self.WaitPageChange("scheduletitle")):
+                return 0
+            
+            self.ChangeSemester(semester_idx)
             xpath = "/html/body/main/div/div/div/div/div[1]/div[2]/ul/li["+str(i)+"]"
             each_subject_list.append(self.GetEachSubjectsData(xpath))
         
@@ -86,8 +97,49 @@ class Scraper:
                 continue
             for j in range(9):
                 subjects_info[j] += each_subject_list[i][j]
-        print(each_subject_list)
+        
+        
+        print(semester_idx)
         print(subjects_info)
+        
+    
+    
+    
+    
+    
+    
+    # Klas에서 사용자의 Data를 가져와 가공한다.
+    def ProcessingUserData(self):
+        if(not self.WaitPageChange("scheduletitle")):
+            return 0
+        
+        html = self.browser.page_source
+        soup = BeautifulSoup(html, 'lxml') #html.parser
+
+        print("0차 ㅇㅋ")
+
+        
+        # cnt_semesters: (진행 + 완료) 학기 갯수
+        semesters = soup.find("select",{"class":"form-control form-control-sm"}).findAll("option")
+        cnt_semesters = len(semesters)
+        
+        print("1차 ㅇㅋ")
+        
+        # 여기서부터 학기를 변경하며 과목 정보를 추출한다.
+
+        
+        print("2차 ㅇㅋ")
+        
+        for semester_i in range(cnt_semesters):
+            print()
+            self.ScrapingSubjectData(semester_i)
+            print("=========================================")
+        
+        print("성공!!")
+        
+        
+        
+        
         
         
     # 특정 과목의 정보를 반환한다. (팀플, 과제, 퀴즈 참여율, 출석율)
@@ -125,6 +177,10 @@ class Scraper:
         res.append(late)
         
         return res
+    
+    
+    
+    
     
     
     # 어떤 class 이름을 입력으로 주면 해당 class 이름이 현재 url 페이지에 나타날 때까지 기다린다.

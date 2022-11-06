@@ -21,10 +21,9 @@ id,pw = loginWin.GetIdPw()
 if(id != 0 and pw != ''):
     scraper = Scraper()
     scraper.AcceseKlas(id,pw)
-    # scraper.ScrapeSubjectName()
-    scraper.ChangeSemester()
+    scraper.ProcessingUserData()
+    # scraper.ChangeSemester()
     
 
-
 # 종료 안되도록 넣은거
-os.system("pause")
+# os.system("pause")

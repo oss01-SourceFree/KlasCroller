@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from multiprocessing.connection import wait
 import sys
 import io
 import os
@@ -22,7 +21,8 @@ if(id != 0 and pw != ''):
     scraper = Scraper()
     scraper.AcceseKlas(id,pw)
     scraper.ProcessingUserData()
-    # scraper.ChangeSemester()
+    # scraper.ScrapingGradeData()
+    
     
 
 # 종료 안되도록 넣은거

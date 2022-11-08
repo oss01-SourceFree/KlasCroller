@@ -54,31 +54,37 @@ class Scraper:
         html = self.browser.page_source
         soup = BeautifulSoup(html, 'lxml') #html.parser
         
-        # sem_name: 학기 이름 ( ex) '2022년도 2학기' )
-        # self.num_semester: (진행 + 완료) 학기 갯수
         semesters = soup.find("select",{"class":"form-control form-control-sm"}).findAll("option")
+        
+        # res: 최종결과(dictionary) 
+        # - key : 학기 이름
+        # - value : [팀플,과제,퀴즈,출석정보,성적] (list) 
         self.num_semester = len(semesters)
-        sem_name = {}
+        res = {}
         for sem in semesters:
-            sem_name.update({sem.text:[]})
-        print(sem_name)
+            res.update({sem.text:[]})
+        # print(res)
         
-        # # academic_participation: 학기별 학업 참여도 (팀플,과제,퀴즈,출석율)
-        # academic_participation = list()
+        # academic_participation: 학기별 학업 참여도 (팀플,과제,퀴즈,출석율)
+        # grade_information: 성적정보
+        academic_participation = list()
+        grade_information = list()
+        for semester_i in range(self.num_semester):
+            academic_participation.append(self.ScrapingSubjectData(semester_i))
+        print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+        print("학업참여정보",academic_participation)
+        grade_information = self.ScrapingGradeData()
+        print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+        print("성적정보",grade_information)
         
-        # # grade_information: 성적정보
-        # grade_information = list()
+        seme_name = list(res.keys())
         
-        # for semester_i in range(self.num_semester):
-        #     academic_participation.append(self.ScrapingSubjectData(semester_i))
-
-        # print(academic_participation)
-        
-        # grade_information = self.ScrapingGradeData()
-        # print(grade_information)
-        
-        
-        
+        for i in range(self.num_semester):
+            res[seme_name[i]] += grade_information[i]
+            res[seme_name[i]] += academic_participation[i]
+        print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')    
+        print("결과",res)
+        return res
         
     # 특정학기를 입력받아 학업 참여도를 가져온다.
     def ScrapingSubjectData(self,semester_idx):
@@ -131,6 +137,7 @@ class Scraper:
         
     
     # 특정 한 학기의 특정 한 과목의 학업 참여도를 종합하여 반환한다. (팀플, 과제, 퀴즈, 출석율)
+    # 가장 최근 학기부터 첫 학기 순으로 반환한다.
     def GetEachSubjectsData(self, xpath):
         self.browser.find_element(By.XPATH,xpath).click()
         if(not self.WaitPageChange('oval')):
@@ -167,6 +174,7 @@ class Scraper:
     
     
     # 성적정보를 가져온다.
+    # 가장 최근 학기부터 첫 학기 순으로 반환한다.
     def ScrapingGradeData(self):
         if(not self.WaitPageChange("scheduletitle")):
             return 0
@@ -236,10 +244,10 @@ class Scraper:
                 
         # res : res_1 , res_2 종합
         # 학기별로 취득 가능 학점 , 실제 취득 학점 순으로 출력
-        res = []
+        res = [[] for _ in range(self.num_semester)]
         for i in range(self.num_semester):
-            res.append(res_2[i])
-            res.append(res_1[i])
+            res[i].append(res_2[i])
+            res[i].append(res_1[i])
             
         return res
     

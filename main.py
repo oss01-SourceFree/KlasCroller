@@ -14,7 +14,7 @@ from scraping import Scraper
 from displaying import WindowManager
 
 #임의로 설정한 학기 (리스트)
-sem = ["2020-1", "2020-2", "2021-1", "2021-2"]
+sem = ["2019-1", "2019-2","2020-1", "2020-2", "2021-1", "2021-2", "2022-1", "2022-2"]
 
 #사용자로부터 id,pw를 받아온다.
 loginWin = WindowManager(sem);

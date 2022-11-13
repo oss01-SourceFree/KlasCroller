@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from multiprocessing.connection import wait
 import sys
 import io
 import os
@@ -22,10 +21,12 @@ loginWin = WindowManager(sem);
 id,pw = loginWin.GetIdPw()
 
 if(id != 0 and pw != ''):
-    scraper = Scraper();
-    scraper.accese_klas(id,pw);
+    scraper = Scraper()
+    scraper.AcceseKlas(id,pw)
+    scraper.ProcessingUserData()
+    # scraper.ScrapingGradeData()
+    
     
 
-
 # 종료 안되도록 넣은거
-os.system("pause")
+# os.system("pause")

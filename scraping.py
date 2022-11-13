@@ -29,7 +29,7 @@ class Scraper:
         
         # 화면 전환시 데이터가 바로 로드되지 않아 scraping 되지 않는 문제를 막기위해
         # scaping 대상 페이지에 도착시 sleep() 사용, 아래 변수는 sleep()에 전달할 인자
-        self.sleeping_time = 0.3
+        self.sleeping_time = 0.5
         
         # self.num_semester: (진행 + 완료) 학기 갯수
         self.num_semester = 0
@@ -44,7 +44,8 @@ class Scraper:
         # 3. 로그인 버튼 클릭
         self.browser.find_element(By.XPATH,"/html/body/div[1]/div/div/div[2]/form/div[2]/button").click()
         
-        
+        if(self.WaitPageChange("ax-dialog-header",3)):
+            return -1
         
     # Klas에서 사용자의 Data를 가져와 가공한다.
     def ProcessingUserData(self):
@@ -80,10 +81,63 @@ class Scraper:
         seme_name = list(res.keys())
         
         for i in range(self.num_semester):
-            res[seme_name[i]] += grade_information[i]
-            res[seme_name[i]] += academic_participation[i]
+            # res[seme_name[i]] += grade_information[i]
+            
+            # 의지력 = (출석 / (출석+지각+결석)) * 100
+            will_power = (academic_participation[i][6] * 100)// (academic_participation[i][6] + academic_participation[i][7] + academic_participation[i][8])
+            res[seme_name[i]].append(int(will_power))
+
+            # 지능 = ((실제 취득 학점) / (취득 가능 학점) ) * 100
+            intellect = grade_information[i][1]
+            res[seme_name[i]].append(int(intellect))
+            
+            # 생존력 = (수강과목 갯수 에 따른 점수) + 총 과제,퀴즈 갯수(50개 이상 이면 50점)
+            # 수강 과목 갯수:
+            # (
+            #   6 개 이상: 50점
+            #   5 개 : 40점
+            #   4 개 : 32점
+            #   3 개 : 24점
+            #   2 개 : 16점
+            #   1 개 : 8점 
+            # )
+            viability = academic_participation[i][1] + academic_participation[i][3] + academic_participation[i][5]
+            if viability > 50:
+                viability = 50
+            if grade_information[i][0] >= 6:
+                viability += 50
+            elif grade_information[i][0] == 5:
+                viability += 40
+            elif grade_information[i][0] == 4:
+                viability += 32
+            elif grade_information[i][0] == 3:
+                viability += 24
+            elif grade_information[i][0] == 2:
+                viability += 16
+            else:
+                viability += 8
+            res[seme_name[i]].append(int(viability))
+            
+            # 근명성 = (제출한 과제 수 + 제출한 퀴즈 수) / (총 과제 수 + 총 퀴즈 수) * 100
+            diligence = 100*(academic_participation[i][0] + academic_participation[i][2] + academic_participation[i][4])
+            diligence = diligence // (academic_participation[i][1] + academic_participation[i][3] + academic_participation[i][5])
+            res[seme_name[i]].append(int(diligence))
+            
+            # 가성비 = (지능 / 의지력)  
+            # 100 이상이면 100으로 넣는다.
+            luck = (intellect*100) // will_power
+            if luck > 100 : luck = 100
+            res[seme_name[i]].append(int(luck))
+            
+            # 파라미터 중, 음수 값이 하나라도 있다면 성적처리가 아직 안됐거나, 잘못 기입된 된 것
+            # 해당 학기는 -2 값을 넣는다.
+            if (viability<0 or intellect<0 or viability<0 or diligence<0 or luck<0 ) : 
+                res[seme_name[i]] = -2
         print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')    
         print("결과",res)
+        print()
+        
+        
         return res
         
     # 특정학기를 입력받아 학업 참여도를 가져온다.
@@ -226,7 +280,14 @@ class Scraper:
                     grade[ta_idx].append(0) 
                 elif ('P' in tbody.text):
                     grade[ta_idx].append(4.5)
+                elif ('NP' in tbody.text):
+                    grade[ta_idx].append(0)
         
+        # res_0: 수강 과목 갯수
+        res_0 = [0 for _ in range(self.num_semester)]
+        for i in range(self.num_semester):
+            res_0[i] = len(credit[i])
+            
         # res_1: 학기별 취득 가능 학점
         res_1 = [0 for _ in range(self.num_semester)]
         for i in range(self.num_semester):
@@ -242,24 +303,23 @@ class Scraper:
             for j in range(len(grade[i])):
                 res_2[i] += (grade[i][j] * credit[i][j])
                 
-        # res : res_1 , res_2 종합
-        # 학기별로 취득 가능 학점 , 실제 취득 학점 순으로 출력
+        # res : res_0 , res_1 , res_2 종합
+        # 학기별로 (수강과목 갯수 , 100 * (실제 취득 학점) / (취득 가능 학점) ) 출력
         res = [[] for _ in range(self.num_semester)]
         for i in range(self.num_semester):
-            res[i].append(res_2[i])
-            res[i].append(res_1[i])
+            res[i].append( res_0[i] )
+            res[i].append( (res_2[i]* 100) // res_1[i])
             
         return res
     
     
     # 어떤 class 이름을 입력으로 주면 해당 class 이름이 현재 url 페이지에 나타날 때까지 기다린다.
     # 10 초 안에 나타나면 데이터 로드할 시간을 좀 더 주고 True 반환, 10 초 이상 안나타나며 False 반환
-    def WaitPageChange(self,class_name):
+    def WaitPageChange(self,class_name,term=10):
         try:
-            WebDriverWait(self.browser,10).until(EC.presence_of_all_elements_located((By.CLASS_NAME,class_name)))
+            WebDriverWait(self.browser,term).until(EC.presence_of_all_elements_located((By.CLASS_NAME,class_name)))
             time.sleep(self.sleeping_time)
         except:
-            print("error")
             return False
         return True
     

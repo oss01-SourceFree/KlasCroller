@@ -2,125 +2,101 @@ from tkinter import *
 import os
 import sys
 
+# 상대 경로 -> 절대 경로
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
 class WindowManager():
-    def __init__(self, sem):
+    def __init__(self):
         self.id = 0;
         self.pw = '';
-        self.win = Tk()
-        self.sem_list = sem
         
+        # window
+        self.win = [_ for _ in range(5)]
         # label
         self.label = [_ for _ in range(10)]
         # button
         self.button = [_ for _ in range(10)]
         # entry
         self.entry = [_ for _ in range(10)]
+        # image
+        self.img = [_ for _ in range(5)]
     
     def __del__(self):
         print()
-    
-    # 상대 경로 -> 절대 경로
-    def resource_path(relative_path):
-        """ Get absolute path to resource, works for dev and for PyInstaller """
-        try:
-            # PyInstaller creates a temp folder and stores path in _MEIPASS
-            base_path = sys._MEIPASS
-        except Exception:
-            base_path = os.path.abspath(".")
-
-        return os.path.join(base_path, relative_path)
         
     # 로그인 용 Window 설정
-    def SetWindowForLogin(self):
-        self.button[0] = Button(self.win)
+    def SetWindow_Login(self):
+        self.win[0] = Tk()
+        self.button[0] = Button(self.win[0])
         for i in range(4):
-            self.label[i] = Label(self.win)
+            self.label[i] = Label(self.win[0])
         for i in range(2):
-            self.entry[i] = Entry(self.win)
-                
+            self.entry[i] = Entry(self.win[0])
         # 창 설정
-        self.win.title("Klas Log-in")
-        self.win.geometry("425x650")
-        self.win.option_add("*Font", "맑은고딕 25")
-        
+        self.win[0].title("Klas Log-in")
+        self.win[0].geometry("425x650")
+        self.win[0].option_add("*Font", "맑은고딕 25")
         # id 라벨
-        self.label[1] = Label(self.win)
+        self.label[1] = Label(self.win[0])
         self.label[1].config(text = "ID")
-        
         # id 입력
-        self.entry[0] = Entry(self.win, relief = "groove")
+        self.entry[0] = Entry(self.win[0], relief = "groove")
         self.entry[0].insert(0,"학번을 입력하세요.")
         def clear(event):
             # 좌클릭 했을 때 입력창의 내용 다 지우기
             if self.entry[0].get() == "학번을 입력하세요.":
                 self.entry[0].delete(0, len(self.entry[0].get()))
         self.entry[0].bind("<Button-1>",clear)
-        
         # pw 라벨
-        self.label[2] = Label(self.win)
+        self.label[2] = Label(self.win[0])
         self.label[2].config(text = "Password")
-        
         # pw 입력
-        self.entry[1] = Entry(self.win)
+        self.entry[1] = Entry(self.win[0])
         self.entry[1].config(show="*")
-        
-        # 메시지 라벨
-        self.label[3] = Label(self.win)
-
         # 광운대학교 로고
-        self.lab_k = Label(self.win)
-        self.img = PhotoImage(file = self.resource_path("KlasCroller\\img\\kwang.png"), master = self.win)
-        self.img = self.img.subsample(1)
-        self.lab_k.config(image = self.img)
-        
+        self.img[0] = PhotoImage(file = resource_path("KlasCroller\\img\\kwang.png"),master = self.win[0])
+        self.img[0] = self.img[0].subsample(1)
+        self.label[0].config(image = self.img[0])
         # 로그인 버튼 설정
-        self.button[0].config(text="로그인",width=5,command=self.OpenWindowForFunc)
+        self.button[0].config(text="로그인",width=5,command=self.EventHandler_Login)
 
     # 로그인 용 Window 열기
-    def OpenWindowForLogin(self):
-        self.SetWindowForLogin()
-        self.lab_k.grid(row=1, column=2)
+    def OpenWindow_Login(self):
+        self.SetWindow_Login()
+        self.label[0].grid(row=1, column=2)
         self.label[1].grid(row=3, column=2)
         self.entry[0].grid(row=4, column=2)
         self.label[2].grid(row=5, column=2)
         self.entry[1].grid(row=6, column=2)
         self.button[0].grid(row=7, column=2)
         self.label[3].grid(row=7, column=2)
-        self.win.mainloop()
+        self.win[0].mainloop()
 
     def GetIdPw(self):
-        self.OpenWindowForLogin()
+        self.OpenWindow_Login()
         return self.id,self.pw
 
     # 로그인 이벤트 핸들러
-    def OpenWindowForFunc(self):
-        self.SetWindowForFunc()
+    def EventHandler_Login(self):
         self.id = self.entry[0].get()
         self.pw = self.entry[1].get()
-        self.win.destroy()
-        
-        self.label1.pack()
-        self.b1.place(x=5,y=80,height=290,width=210)
-        #self.lab_1.place(x=7,y=85,height=100,width=100)
-        self.b2.place(x=220,y=80,height=290,width=210)
-        self.b3.place(x=435,y=80,height=290,width=210)
-        self.win.mainloop()
+        self.win[0].destroy()
         
     # 두번째 기능선택 창 구현
-    def SetWindowForFunc(self):
+    def SetWindow_MainMenu(self):
         self.win_func = Tk()
         self.win_func.title("Klas function")
         self.win_func.geometry("650x400") # 가로 세로
         self.win_func.option_add("*Font", "맑은고딕 25")
         self.label1 = Label(self.win_func, text = '기능 선택')
-
-        
-
-        # 광운대학교 로고
-        #self.lab_1 = Label(self.win)
-        #self.img = PhotoImage(file = "C:\\Users\\Owner\\OneDrive\\바탕 화면\\oss2\\KlasCroller\\img\\img1.png", master = self.win_func)
-        #self.img = self.img.subsample(1)
-        #self.lab_1.config(image = self.img)
         
         # 기능 선택 버튼
         self.b1 = Button(self.win_func, text = "완료 학기\n 분석", command = self.FuncEventHandler1)
@@ -281,8 +257,4 @@ class WindowManager():
         self.win_data10.option_add("*Font", "맑은고딕 25")
         self.label10 = Label(self.win_data10, text = self.sem_list[9] + "학기 분석하기")
         self.label10.pack()
-
-    def GetIdPw(self):
-        self.OpenWindowForLogin()
-        return self.id,self.pw
 

@@ -11,22 +11,70 @@ sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding = 'utf-8')
 
 from scraping import Scraper
 from displaying import WindowManager
+from caching import CacheManager
 
-#임의로 설정한 학기 (리스트)
-sem = ["2019-1", "2019-2","2020-1", "2020-2", "2021-1", "2021-2", "2022-1", "2022-2"]
+# 상대 경로 -> 절대 경로
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
+# #사용자로부터 id,pw를 받아온다.
+# loginWin = WindowManager()
+# id,pw = loginWin.GetIdPw()
+
+# path_user_file = resource_path("KlasCroller\\usr")
+
+# scraper = Scraper()
+# scraper.AcceseKlas(id,pw)
+# user_info = scraper.ProcessingUserData()
+
+# print("따끈따끈한거: ", user_info)
+
+# cache = CacheManager(path_user_file,id)
+# cache.SaveCache(user_info)
+
 
 #사용자로부터 id,pw를 받아온다.
-loginWin = WindowManager(sem);
-
+loginWin = WindowManager()
 id,pw = loginWin.GetIdPw()
 
-if(id != 0 and pw != ''):
-    scraper = Scraper()
-    scraper.AcceseKlas(id,pw)
-    scraper.ProcessingUserData()
-    # scraper.ScrapingGradeData()
+# 유저 정보가 담긴 파일 위치
+path_user_file = resource_path("KlasCroller\\usr")
+cache = CacheManager(path_user_file,id)
+
+# 학번.plk 파일 이 없다면 klas에 로그인, 스크래핑 후 파일을 만든다.
+if not os.path.isfile(os.path.join(path_user_file,str(id))+".plk"):
+    
+    # 입력한 id,pw로 klas에 로그인 될 때까지 반복
+    success_login = False
+    while(not success_login):
+        scraper = Scraper()
+        if(scraper.AcceseKlas(id,pw) != -1):
+            success_login = True
+        else:
+            del scraper
+            id,pw = loginWin.GetIdPw()
+    
+    # 로그인 완료되면, 데이터 가져오기
+    user_info = scraper.ProcessingUserData()
+    cache.SaveCache(user_info)
+    
+print("따끈따끈한거: ", cache.GetCache())
     
     
+# print("성공")
+
+# if(id != 0 and pw != ''):
+#     scraper = Scraper()
+#     scraper.AcceseKlas(id,pw)
+#     scraper.ProcessingUserData()
+#     # scraper.ScrapingGradeData()
 
 # 종료 안되도록 넣은거
 # os.system("pause")

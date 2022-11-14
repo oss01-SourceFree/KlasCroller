@@ -24,57 +24,44 @@ def resource_path(relative_path):
 
     return os.path.join(base_path, relative_path)
 
+
 # #사용자로부터 id,pw를 받아온다.
 # loginWin = WindowManager()
 # id,pw = loginWin.GetIdPw()
 
+# # 유저 정보가 담긴 파일 위치
 # path_user_file = resource_path("KlasCroller\\usr")
-
-# scraper = Scraper()
-# scraper.AcceseKlas(id,pw)
-# user_info = scraper.ProcessingUserData()
-
-# print("따끈따끈한거: ", user_info)
-
 # cache = CacheManager(path_user_file,id)
-# cache.SaveCache(user_info)
 
-
-#사용자로부터 id,pw를 받아온다.
-loginWin = WindowManager()
-id,pw = loginWin.GetIdPw()
-
-# 유저 정보가 담긴 파일 위치
-path_user_file = resource_path("KlasCroller\\usr")
-cache = CacheManager(path_user_file,id)
-
-# 학번.plk 파일 이 없다면 klas에 로그인, 스크래핑 후 파일을 만든다.
-if not os.path.isfile(os.path.join(path_user_file,str(id))+".plk"):
+# # 학번.plk 파일 이 없다면 klas에 로그인, 스크래핑 후 파일을 만든다.
+# if not os.path.isfile(os.path.join(path_user_file,str(id))+".plk"):
     
-    # 입력한 id,pw로 klas에 로그인 될 때까지 반복
-    success_login = False
-    while(not success_login):
-        scraper = Scraper()
-        if(scraper.AcceseKlas(id,pw) != -1):
-            success_login = True
-        else:
-            del scraper
-            id,pw = loginWin.GetIdPw()
+#     # 입력한 id,pw로 klas에 로그인 될 때까지 반복
+#     success_login = False
+#     while(not success_login):
+#         scraper = Scraper()
+#         if(scraper.AcceseKlas(id,pw) != -1):
+#             success_login = True
+#         else:
+#             del scraper
+#             id,pw = loginWin.GetIdPw()
     
-    # 로그인 완료되면, 데이터 가져오기
-    user_info = scraper.ProcessingUserData()
-    cache.SaveCache(user_info)
+#     # 로그인 완료되면, 데이터 가져오기
+#     user_info = scraper.ProcessingUserData()
+#     cache.SaveCache(user_info)
     
-print("따끈따끈한거: ", cache.GetCache())
-    
-    
-# print("성공")
+#     del scraper
 
-# if(id != 0 and pw != ''):
-#     scraper = Scraper()
-#     scraper.AcceseKlas(id,pw)
-#     scraper.ProcessingUserData()
-#     # scraper.ScrapingGradeData()
+# # user_info : 유저 정보가 담긴 dictionary
+# user_info = cache.GetCache()
 
-# 종료 안되도록 넣은거
-# os.system("pause")
+# print(user_info)
+
+loginWin = WindowManager({"2017년도 1학기":[1,2,3,4],"2017년도 2학기":[3,4,5,6],"2017년도 3학기":[5,6,7,8]})
+
+# loginWin.GetIdPw()
+loginWin.OpenWindow_MainMenu()
+
+
+
+

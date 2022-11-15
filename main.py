@@ -54,12 +54,15 @@ def resource_path(relative_path):
 
 # # user_info : 유저 정보가 담긴 dictionary
 # user_info = cache.GetCache()
-
 # print(user_info)
 
-loginWin = WindowManager({"2017년도 1학기":[1,2,3,4],"2017년도 2학기":[3,4,5,6],"2017년도 3학기":[5,6,7,8]})
 
-# loginWin.GetIdPw()
+path_user_file = resource_path("KlasCroller\\usr")
+cache = CacheManager(path_user_file,str(2017203088))
+user_info = cache.GetCache()
+loginWin = WindowManager(user_info)
+
+# print(loginWin.GetIdPw())
 loginWin.OpenWindow_MainMenu()
 
 

@@ -13,6 +13,8 @@ from scraping import Scraper
 from displaying import *
 from caching import CacheManager
 
+from multiprocessing import Process
+
 # 상대 경로 -> 절대 경로
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """

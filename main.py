@@ -53,7 +53,7 @@ if not os.path.isfile(os.path.join(path_user_file,str(id))+".plk"):
     if(user_info == -1):
         del scraper
         exit_message = SubBoxManager()
-        exit_message.MessageBox("아니 도대체 뭘 만졌어요? 종료할거임 ㅅㄱ ㅂ2")
+        exit_message.MessageBox("인터넷 연결이 원활하지 않아 비정상 종료되었습니다.")
         os._exit(0)
     
     cache.SaveCache(user_info)

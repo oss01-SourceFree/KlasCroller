@@ -33,7 +33,8 @@ class Scraper:
         
         # self.num_semester: (진행 + 완료) 학기 갯수
         self.num_semester = 0
-    
+    def __del__(self):
+        print()
     # id와 pw를 입력받아 klas에서 로그인 실행
     def AcceseKlas(self,id,pw):
         # 1. chrome창을 띄어, klas로 이동 
@@ -44,101 +45,100 @@ class Scraper:
         # 3. 로그인 버튼 클릭
         self.browser.find_element(By.XPATH,"/html/body/div[1]/div/div/div[2]/form/div[2]/button").click()
         
+        # 만약 로그인 불가 알림창이 나온다면 -1을 반환한다.
         if(self.WaitPageChange("ax-dialog-header",3)):
             return -1
         
     # Klas에서 사용자의 Data를 가져와 가공한다.
     def ProcessingUserData(self):
-        if(not self.WaitPageChange("scheduletitle")):
-            return 0
-        
-        html = self.browser.page_source
-        soup = BeautifulSoup(html, 'lxml') #html.parser
-        
-        semesters = soup.find("select",{"class":"form-control form-control-sm"}).findAll("option")
-        
-        # res: 최종결과(dictionary) 
-        # - key : 학기 이름
-        # - value : [팀플,과제,퀴즈,출석정보,성적] (list) 
-        self.num_semester = len(semesters)
-        res = {}
-        for sem in semesters:
-            res.update({sem.text:[]})
-        # print(res)
-        
-        # academic_participation: 학기별 학업 참여도 (팀플,과제,퀴즈,출석율)
-        # grade_information: 성적정보
-        academic_participation = list()
-        grade_information = list()
-        for semester_i in range(self.num_semester):
-            academic_participation.append(self.ScrapingSubjectData(semester_i))
-        print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-        print("학업참여정보",academic_participation)
-        grade_information = self.ScrapingGradeData()
-        print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-        print("성적정보",grade_information)
-        
-        seme_name = list(res.keys())
-        
-        for i in range(self.num_semester):
-            # res[seme_name[i]] += grade_information[i]
+        try:
+            if(not self.WaitPageChange("scheduletitle")):
+                return 0
             
-            # 의지력 = (출석 / (출석+지각+결석)) * 100
-            will_power = (academic_participation[i][6] * 100)// (academic_participation[i][6] + academic_participation[i][7] + academic_participation[i][8])
-            res[seme_name[i]].append(int(will_power))
+            html = self.browser.page_source
+            soup = BeautifulSoup(html, 'lxml') #html.parser
+            
+            semesters = soup.find("select",{"class":"form-control form-control-sm"}).findAll("option")
+            
+            # res: 최종결과(dictionary) 
+            # - key : 학기 이름
+            # - value : [팀플,과제,퀴즈,출석정보,성적] (list) 
+            self.num_semester = len(semesters)
+            res = {}
+            for sem in semesters:
+                res.update({sem.text:[]})
+            # print(res)
+            
+            # academic_participation: 학기별 학업 참여도 (팀플,과제,퀴즈,출석율)
+            # grade_information: 성적정보
+            academic_participation = list()
+            grade_information = list()
+            for semester_i in range(self.num_semester):
+                academic_participation.append(self.ScrapingSubjectData(semester_i))
+            # print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+            # print("학업참여정보",academic_participation)
+            grade_information = self.ScrapingGradeData()
+            # print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+            # print("성적정보",grade_information)
+            
+            seme_name = list(res.keys())
+            
+            for i in range(self.num_semester):
+                # res[seme_name[i]] += grade_information[i]
+                
+                # 의지력 = (출석 / (출석+지각+결석)) * 100
+                will_power = (academic_participation[i][6] * 100)// (academic_participation[i][6] + academic_participation[i][7] + academic_participation[i][8])
+                res[seme_name[i]].append(int(will_power))
 
-            # 지능 = ((실제 취득 학점) / (취득 가능 학점) ) * 100
-            intellect = grade_information[i][1]
-            res[seme_name[i]].append(int(intellect))
-            
-            # 생존력 = (수강과목 갯수 에 따른 점수) + 총 과제,퀴즈 갯수(50개 이상 이면 50점)
-            # 수강 과목 갯수:
-            # (
-            #   6 개 이상: 50점
-            #   5 개 : 40점
-            #   4 개 : 32점
-            #   3 개 : 24점
-            #   2 개 : 16점
-            #   1 개 : 8점 
-            # )
-            viability = academic_participation[i][1] + academic_participation[i][3] + academic_participation[i][5]
-            if viability > 50:
-                viability = 50
-            if grade_information[i][0] >= 6:
-                viability += 50
-            elif grade_information[i][0] == 5:
-                viability += 40
-            elif grade_information[i][0] == 4:
-                viability += 32
-            elif grade_information[i][0] == 3:
-                viability += 24
-            elif grade_information[i][0] == 2:
-                viability += 16
-            else:
-                viability += 8
-            res[seme_name[i]].append(int(viability))
-            
-            # 근명성 = (제출한 과제 수 + 제출한 퀴즈 수) / (총 과제 수 + 총 퀴즈 수) * 100
-            diligence = 100*(academic_participation[i][0] + academic_participation[i][2] + academic_participation[i][4])
-            diligence = diligence // (academic_participation[i][1] + academic_participation[i][3] + academic_participation[i][5])
-            res[seme_name[i]].append(int(diligence))
-            
-            # 가성비 = (지능 / 의지력)  
-            # 100 이상이면 100으로 넣는다.
-            luck = (intellect*100) // will_power
-            if luck > 100 : luck = 100
-            res[seme_name[i]].append(int(luck))
-            
-            # 파라미터 중, 음수 값이 하나라도 있다면 성적처리가 아직 안됐거나, 잘못 기입된 된 것
-            # 해당 학기는 -2 값을 넣는다.
-            if (viability<0 or intellect<0 or viability<0 or diligence<0 or luck<0 ) : 
-                res[seme_name[i]] = -2
-        print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')    
-        print("결과",res)
-        print()
-        
-        
-        return res
+                # 지능 = ((실제 취득 학점) / (취득 가능 학점) ) * 100
+                intellect = grade_information[i][1]
+                res[seme_name[i]].append(int(intellect))
+                
+                # 생존력 = (수강과목 갯수 에 따른 점수) + 총 과제,퀴즈 갯수(50개 이상 이면 50점)
+                # 수강 과목 갯수:
+                # (
+                #   6 개 이상: 50점
+                #   5 개 : 40점
+                #   4 개 : 32점
+                #   3 개 : 24점
+                #   2 개 : 16점
+                #   1 개 : 8점 
+                # )
+                viability = academic_participation[i][1] + academic_participation[i][3] + academic_participation[i][5]
+                if viability > 50:
+                    viability = 50
+                if grade_information[i][0] >= 6:
+                    viability += 50
+                elif grade_information[i][0] == 5:
+                    viability += 40
+                elif grade_information[i][0] == 4:
+                    viability += 32
+                elif grade_information[i][0] == 3:
+                    viability += 24
+                elif grade_information[i][0] == 2:
+                    viability += 16
+                else:
+                    viability += 8
+                res[seme_name[i]].append(int(viability))
+                
+                # 근명성 = (제출한 과제 수 + 제출한 퀴즈 수) / (총 과제 수 + 총 퀴즈 수) * 100
+                diligence = 100*(academic_participation[i][0] + academic_participation[i][2] + academic_participation[i][4])
+                diligence = diligence // (academic_participation[i][1] + academic_participation[i][3] + academic_participation[i][5])
+                res[seme_name[i]].append(int(diligence))
+                
+                # 가성비 = (지능 / 의지력)  
+                # 100 이상이면 100으로 넣는다.
+                luck = (intellect*100) // will_power
+                if luck > 100 : luck = 100
+                res[seme_name[i]].append(int(luck))
+                
+                # 파라미터 중, 음수 값이 하나라도 있다면 성적처리가 아직 안됐거나, 잘못 기입된 된 것
+                # 해당 학기 정보는 삭제한다.
+                if (viability<0 or intellect<0 or viability<0 or diligence<0 or luck<0 ) : 
+                    del(res[seme_name[i]])
+            return res
+        except:
+            return -1
         
     # 특정학기를 입력받아 학업 참여도를 가져온다.
     def ScrapingSubjectData(self,semester_idx):

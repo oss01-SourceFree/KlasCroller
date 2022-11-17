@@ -5,6 +5,8 @@ import sys
 import matplotlib.pyplot as plt
 from functools import partial
 
+import time
+
 # 상대 경로 -> 절대 경로
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -209,9 +211,6 @@ class WindowManager():
         print(list_2)
         print()
         
-
-
-
     # 세번째 기능 선택 이벤트 핸들러
     def FuncEventHandler3(self):
         self.win_sem3 = Tk()
@@ -222,3 +221,38 @@ class WindowManager():
         self.label1 = Label(self.win_sem3, text = self.sem_list[idx] + "학기 학점 결과보기")
         self.label1.pack()
         
+class SubBoxManager():
+    def __init__(self):
+        print()
+    def MessageBox(self,string):
+        self.win_message = Tk()
+        self.win_message.title("Message")
+        self.win_message.geometry("384x128")
+        self.win_message.option_add("*Font", "맑은고딕 12")
+        
+        label_message = Label(master=self.win_message)
+        button_message = Button(master=self.win_message)
+        
+        label_message.config(text = string,justify= CENTER, wraplength= 300)
+        button_message.config(text="확인",command=self.Check_Ok)
+        
+        label_message.pack(expand=True, fill="both")
+        button_message.pack(side="bottom", anchor="s",pady=10)
+        self.win_message.mainloop()
+    
+    def LoadingBox(self):
+        self.win_loading = Tk()
+        self.win_loading.title("Loading")
+        self.win_loading.geometry("384x128")
+        self.win_loading.option_add("*Font", "맑은고딕 12")
+        
+        Label(self.win_loading,text="Klas에서 정보를 가져오고 있습니다..").pack(fill="both",pady=10)
+        Label(self.win_loading,text="( 최대 소요시간: 5분 )").pack(fill="both")
+        
+        progress = ttk.Progressbar(self.win_loading,orient=HORIZONTAL,length=300,mode='determinate')
+        progress.pack(pady=10)
+        progress.start(10)
+        self.win_loading.mainloop()
+        
+    def Check_Ok(self):
+        self.win_message.destroy()

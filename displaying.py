@@ -2,10 +2,17 @@ from tkinter import *
 from tkinter import ttk
 import os
 import sys
-import matplotlib.pyplot as plt
 from functools import partial
-
-import time
+import tkinter.font
+import math
+from math import pi
+import pandas as pd
+import matplotlib
+import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+matplotlib.rcParams['font.family']='Malgun Gothic'
+matplotlib.rcParams['axes.unicode_minus'] = False
 
 # 상대 경로 -> 절대 경로
 def resource_path(relative_path):
@@ -23,151 +30,190 @@ class WindowManager():
         self.id = ''
         self.pw = ''
         
+        self.category = ['의지력', '지능' , '생존력' , '근명성' , '가성비']
         # 유저 정보 ( 의지력 , 지능 , 생존력 , 근명성 , 가성비)
         self.user_info = user_info
         # 전체(완료+현재) 학기 이름 (ex) 2022년 1학기)
         self.seme_list = list(user_info.keys())
         # 전체(완료+현재) 학기 수
         self.cnt_seme = len(user_info)
-    
-    def __del__(self):
-        print()
-
+        
     # 로그인 용 Window 열기
     def OpenWindow_Login(self):
         # 창 설정
         self.win_lo = Tk()
         self.win_lo.title("Klas Log-in")
-        self.win_lo.geometry("425x650")
-        self.win_lo.option_add("*Font", "맑은고딕 25")
+        self.win_lo.geometry("400x500")
         
-        # 하위 컴포넌트 선언
-        # Button: 1
-        # Label: 4
-        # Entry: 2
-        # PhotoImage : 1
-        button_lo = Button(self.win_lo)
-        label_lo = [Label(self.win_lo) for _ in range(4)]
-        self.entry_lo = [Entry(self.win_lo) for _ in range(2)]
-        img_lo = PhotoImage(master = self.win_lo)
+        # self.win_lo.protocol('WM_DELETE_WINDOW',self.Exit_Window_Login_x)
+        
+        font=tkinter.font.Font(family="맑은 고딕 25", size=10, weight="bold")
+        
+        canvas = Canvas(self.win_lo, width=400, height=500, background='#7C1B0F')
+        canvas.pack(padx=0, pady=0)
+        canvas.place(x=0, y=0)
 
-        # id 라벨
-        label_lo[1].config(text = "ID")
-        # id 입력
-        self.entry_lo[0] = Entry(self.win_lo, relief = "groove")
-        self.entry_lo[0].insert(0,"학번을 입력하세요.")
+        can = Canvas(self.win_lo, width=300, height=85, background='#7C1B0F')
+        can.pack(padx=0, pady=0)
+        can.place(x=50, y=55)
+
+        file_img1 = resource_path("KlasCroller\\img\\back.png")
+        img1 = PhotoImage(file=file_img1)
+        canvas.create_image(200, 250, image=img1)
+
+        file_img2 = resource_path("KlasCroller\\img\\campus_logo.png")
+        img2 = PhotoImage(file=file_img2)
+        can.create_image(157, 45, image=img2)
+
+        # id 입력창
+        self.ent1 = Entry(self.win_lo, relief="groove")
+        self.ent1.insert(0, "ID : 학번을 입력하세요")
         def clear(event):
             # 좌클릭 했을 때 입력창의 내용 다 지우기
-            if self.entry_lo[0].get() == "학번을 입력하세요.":
-                self.entry_lo[0].delete(0, len(self.entry_lo[0].get()))
-        self.entry_lo[0].bind("<Button-1>",clear)
-        # pw 라벨
-        label_lo[2] = Label(self.win_lo)
-        label_lo[2].config(text = "Password")
-        # pw 입력
-        self.entry_lo[1] = Entry(self.win_lo)
-        self.entry_lo[1].config(show="*")
-        # 광운대학교 로고
-        img_lo.config(file = resource_path("KlasCroller\\img\\kwang.png"))
-        img_lo = img_lo.subsample(1)
-        label_lo[0].config(image = img_lo)
-        # 로그인 버튼
-        button_lo.config(text="로그인",width=5,command=self.EventHandler_Login)
-        
-        # 출력
-        label_lo[0].grid(row=1, column=2)
-        label_lo[1].grid(row=3, column=2)
-        self.entry_lo[0].grid(row=4, column=2)
-        label_lo[2].grid(row=5, column=2)
-        self.entry_lo[1].grid(row=6, column=2)
-        button_lo.grid(row=7, column=2)
-        label_lo[3].grid(row=7, column=2)
-        self.win_lo.mainloop()
+            if self.ent1.get() == "ID : 학번을 입력하세요":
+                self.ent1.delete(0, len(self.ent1.get()))
+        self.ent1.bind("<Button-1>", clear)
+        self.ent1.place(x=50,y=200,width=300,height=35)
 
+        # pw 입력창
+        self.ent2 = Entry(self.win_lo)
+        self.ent2.config(show="*")
+        self.ent2.place(x=50,y=270,width=300,height=35)
+        
+        btn = Button(self.win_lo, font=font, bg="white", fg="black")
+        btn.config(text = "로그인")
+        btn.place(x=150,y=350,width=100,height=40)
+        btn.config(command=self.EventHandler_Login)
+        
+        self.win_lo.mainloop()
+    
     def GetIdPw(self):
         self.OpenWindow_Login()
         return self.id,self.pw
 
     # 로그인 이벤트 핸들러
     def EventHandler_Login(self):
-        self.id = self.entry_lo[0].get()
-        self.pw = self.entry_lo[1].get()
+        self.id = self.ent1.get()
+        self.pw = self.ent2.get()
         self.win_lo.destroy()
         
     # 메인메뉴 창 열기
     def OpenWindow_MainMenu(self):
         # 창 설정
-        win_main = Tk()
-        win_main.title("Main Menu")
-        win_main.geometry("650x400") # 가로 세로
-        win_main.option_add("*Font", "맑은고딕 25")
+        self.win_main = Tk()
+        self.win_main.title("Main Menu")
+        self.win_main.geometry("500x560") # 가로 세로
+        self.win_main.resizable(True, True)
         
-        # 하위 컴포넌트 선언
-        # Button : 3
-        # Label : 1
-        button_main = [Button(win_main) for _ in range(3)]
-        label_main = Label(win_main)
+        self.win_main.protocol('WM_DELETE_WINDOW',self.win_main.iconify)
+        self.win_main.bind('<Escape>', lambda e: self.win_main.destroy())
         
-        # 라벨 설정
-        label_main.config(text="기능 선택")
+        # 폰트들 설정
+        font=tkinter.font.Font(family="맑은 고딕 25", size=10, weight="bold")
+        font1=tkinter.font.Font(family="휴먼둥근헤드라인", size=30)#, weight="bold")
+        font2=tkinter.font.Font(family="휴먼둥근헤드라인", size=17)
         
-        # 버튼 설정
-        button_main[0].config(text = "한 학기\n 분석",command = self.OpenWindow_SelectOne)
-        button_main[1].config(text = "학기 간 \n비교 분석", command = self.OpenWindow_SelectTwo)
-        button_main[2].config(text = "학점 mbti", command = self.FuncEventHandler3)
+        can = Canvas(self.win_main, width=500, height=230,background='red')
+        can.pack(padx=0, pady=0)
+        can.place(x=0, y=0)
         
-        label_main.pack()
-        button_main[0].place(x=5,y=80,height=290,width=210)
-        #label_main.place(x=7,y=85,height=100,width=100)
-        button_main[1].place(x=220,y=80,height=290,width=210)
-        button_main[2].place(x=435,y=80,height=290,width=210)
-        win_main.mainloop()
+        # 바탕 광운대 사진 삽입
+        file_back = resource_path("KlasCroller\\img\\back.png")
+        back = PhotoImage(file=file_back)
+        can.create_image(0,0,image=back)
+
+        # 각 기능 버튼에 해당하는 이미지들
+        file_img1 = resource_path("KlasCroller\img\img1.png")
+        img1 = PhotoImage(file=file_img1)
+
+        file_img2 = resource_path("KlasCroller\img\img2.png")
+        img2 = PhotoImage(file=file_img2)
+
+        file_img3 = resource_path("KlasCroller\img\img3.png")
+        img3 = PhotoImage(file=file_img3)
+
+        file_img4 = resource_path("KlasCroller\img\img4.png")
+        img4 = PhotoImage(file=file_img4)
+
+        lab1 = Label(self.win_main)
+        lab1.config(text = "기능선택", font=font1, foreground='white', background='#7C1B0F')
+        lab1.place(x=25,y=25)
+
+        # 사용자 이름(사용자 이름 크롤링 활용해야해요!)
+        lab2 = Label(self.win_main)
+        lab2.config(text = "2020603033" + " " + "한수민" + " " + "님", font=font2, foreground='white', background='#7C1B0F')
+        lab2.place(x=25,y=170)
+
+        b1 = Button(self.win_main, text = "완료 학기\n 분석",font=font, bg="white", fg="black",image=img1, compound="left",command=self.OpenWindow_SelectOne)
+        b2 = Button(self.win_main, text = "학기 간 \n비교 분석", font=font, bg="white", fg="black",image=img2, compound="left")
+        b3 = Button(self.win_main, text = "SF\nMBTI", font=font, bg="white", fg="black",image=img3, compound="left")
+        b4 = Button(self.win_main, text = "취업정보 확인", font=font, bg="white", fg="black",image=img4, compound="left")
+        b1.place(x=0,y=220,width=250, height=170)
+        b2.place(x=250,y=220,width=250, height=170)
+        b3.place(x=0,y=390,width=250, height=170)
+        b4.place(x=250,y=390,width=250, height=170);
+        self.win_main.mainloop()
     
     # 학기선택 창 설정
     def OpenWindow_SelectOne(self):
         # 창 설정
-        win_select_1 = Tk()
-        win_select_1.title("학기 선택")
-        win_select_1.geometry("400x300")
-        win_select_1.option_add("*Font", "맑은고딕 25")
-        
-        # 하위 컴포넌트 선언
-        # Button: 학기 수 만큼
-        # Label: 1
-        label_select_1 = Label(win_select_1)
-        button_select_1 = [Button(win_select_1) for _ in range(self.cnt_seme)]
-        
-        # 라벨 설정
-        label_select_1.config(text = "한 개의 학기를 선택하세요.")
-        
-        # 버튼 설정
-        for i in range(self.cnt_seme):
-            button_select_1[i].config(text = self.seme_list[i]
-                                        ,command = partial(self.OpenWindow_OneSemesterAnalysis, i))
-            
-        # 출력
-        label_select_1.pack()
-        for i in range(self.cnt_seme):
-            button_select_1[i].pack()
-        win_select_1.mainloop()
+        win_select_one = Tk()
+        win_select_one.title("학기 선택창")
+        win_select_one.geometry("650x400")
+        win_select_one.resizable(width = FALSE, height = FALSE)
 
-    def OpenWindow_OneSemesterAnalysis(self,semster):
-        # 창 설정
-        win_func_1 = Tk()
-        win_func_1.title("한 학기 분석")
-        win_func_1.geometry("400x300")
-        win_func_1.option_add("*Font", "맑은고딕 25")
         # 하위 컴포넌트 선언
-        # Label : 2
-        label_func_1 = [Label(win_func_1) for _ in range(3)]
+        # Button : 1
+        # Combobox : 2
+        button_select_1 = Button(win_select_one)
+        self.combobox_1 = ttk.Combobox(win_select_one)
         
-        # 라벨 설정
-        label_func_1[1].config(text= "한 학기 분석")
-        label_func_1[1].config(text= str(self.seme_list[semster]))
-        label_func_1[2].config(text= str(self.user_info[self.seme_list[semster]]))
+        #비교 학기 선택창에 콤보박스 생성
+        self.combobox_1.config(height = 20)
+        self.combobox_1.config(value = self.seme_list)
+        self.combobox_1.current(0)
         
-        for i in range(3):
-            label_func_1[i].pack()
+        button_select_1.config(command = self.OpenWindow_OneSemesterAnalysis)
+        
+        #출력
+        self.combobox_1.pack()
+        button_select_1.pack()
+        
+        win_select_one.mainloop()
+    def OpenWindow_OneSemesterAnalysis(self):
+        title = self.combobox_1.get()
+        data_list = self.user_info[title]
+        data_list += data_list[:1]
+        
+        angles = [n/float(5) * 2 *pi for n in range(5)]
+        angles += angles[:1]
+        
+        fig,ax = plt.subplots(1,1,figsize=(3,5),subplot_kw=dict(polar=True))
+        ax.patch.set_facecolor('#7C1B0F')
+        fig.patch.set_facecolor('#7C1B0F')
+        ax.set_theta_offset(pi / 2) ## 시작점
+        ax.set_theta_direction(-1) ## 그려지는 방향 시계방향
+        plt.title(title, size=15, color='white')
+        
+        plt.xticks(angles[:-1],self.category,color='white',size=10)
+        ax.tick_params(axis='x', which='major', pad=5)
+        plt.yticks([20,40,60,80],['20','40','60','80'],color='white',size=10)
+        plt.ylim(0,100)
+        ax.set_rlabel_position(100)
+        
+        ax.plot(angles,data_list,linewidth=3,linestyle='solid',color='#FFFF00')
+        ax.fill(angles,data_list,'#FFFF00',alpha=0.5) 
+        
+        window = Tk()
+        window.config(bg='#7C1B0F')
+        window.title(str(title)+" 학기 분석")
+        window.geometry("650x400")
+        window.resizable(width = FALSE, height = FALSE)
+        
+        canvas = FigureCanvasTkAgg(fig, master=window)
+        canvas.get_tk_widget().pack()
+
+
 
     
     # 두번째 기능 선택 이벤트 핸들러
@@ -221,8 +267,15 @@ class WindowManager():
         self.label1 = Label(self.win_sem3, text = self.sem_list[idx] + "학기 학점 결과보기")
         self.label1.pack()
         
+    def Exit_Window_x(self):
+        self.win_lo.destroy()
+        self.win_main.destroy()
+        os._exit(0)
+        
 class SubBoxManager():
     def __init__(self):
+        print()
+    def __del__(self):
         print()
     def MessageBox(self,string):
         self.win_message = Tk()
@@ -240,14 +293,14 @@ class SubBoxManager():
         button_message.pack(side="bottom", anchor="s",pady=10)
         self.win_message.mainloop()
     
-    def LoadingBox(self):
+    def LoadingBox(self ,str="...", max_min = "5"):
         self.win_loading = Tk()
         self.win_loading.title("Loading")
         self.win_loading.geometry("384x128")
         self.win_loading.option_add("*Font", "맑은고딕 12")
         
-        Label(self.win_loading,text="Klas에서 정보를 가져오고 있습니다..").pack(fill="both",pady=10)
-        Label(self.win_loading,text="( 최대 소요시간: 5분 )").pack(fill="both")
+        Label(self.win_loading,text=str).pack(fill="both",pady=10)
+        Label(self.win_loading,text="( 최대 소요시간: "+max_min+"분 )").pack(fill="both")
         
         progress = ttk.Progressbar(self.win_loading,orient=HORIZONTAL,length=300,mode='determinate')
         progress.pack(pady=10)
@@ -256,3 +309,5 @@ class SubBoxManager():
         
     def Check_Ok(self):
         self.win_message.destroy()
+        
+    

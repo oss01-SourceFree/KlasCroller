@@ -224,6 +224,8 @@ class WindowManager():
 class SubBoxManager():
     def __init__(self):
         print()
+    def __del__(self):
+        print()
     def MessageBox(self,string):
         self.win_message = Tk()
         self.win_message.title("Message")

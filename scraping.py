@@ -13,7 +13,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
-
 from bs4 import BeautifulSoup
 
 
@@ -33,6 +32,7 @@ class Scraper:
         
         # self.num_semester: (진행 + 완료) 학기 갯수
         self.num_semester = 0
+        
     def __del__(self):
         print()
     # id와 pw를 입력받아 klas에서 로그인 실행

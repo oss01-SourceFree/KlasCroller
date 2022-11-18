@@ -24,3 +24,8 @@ class CacheManager:
         with gzip.open(self.file_path,'rb') as f:
             dic = pickle.load(f)
         return dic
+    
+    # 파일 삭제
+    def DestoryFile(self):
+        if os.path.exists(self.file_path):
+            os.remove(self.file_path)

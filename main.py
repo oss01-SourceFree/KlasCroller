@@ -37,13 +37,13 @@ if __name__ == "__main__":
     # 사용자로부터 id,pw를 받아온다.
     id,pw = loginWin.GetIdPw()
     
-    # loading box 출력
-    proc = mp.Process(name="Sub Process", target=alert.LoadingBox, daemon=True)
+    # loading box 출력(SubProcess, 동시실행을 위해서)
+    proc = mp.Process(target=alert.LoadingBox, daemon=True)
     proc.start()
     
     cache = CacheManager(path_user_file,id)
     file_name = os.path.join(path_user_file,str(id)+".plk")
-    print(file_name)
+    
     # (학번).plk 파일 이 없거나 파일 속 딕셔너리가 비었다면, klas에 로그인, 스크래핑 후 파일을 만든다.
     if not os.path.isfile(file_name):
         # 입력한 id,pw로 klas에 로그인 될 때까지 반복
@@ -56,11 +56,12 @@ if __name__ == "__main__":
                 del scraper
                 id,pw = loginWin.GetIdPw()
         
-        # 로그인 완료되면, 데이터 가져오기
+        # 로그인 완료되면, 데이터 가져오기 (제대로 스크랩이 안된다면 -1 반환)
         user_info = scraper.ProcessingUserData()
-        
+        del loginWin
         del scraper
         
+        # user_info == -1 이라면 알림창 출력 후 프로그램 종료
         if(user_info == -1):
             proc.kill()
             alert.MessageBox("인터넷 연결이 원활하지 않아 비정상 종료되었습니다. 다시 시도해 주십시오.")
@@ -68,11 +69,16 @@ if __name__ == "__main__":
         
         cache.SaveCache(user_info)
     
+    # 로딩창 제거(SubProcess 종료)
     proc.kill()
     
     # user_info : 유저 정보가 담긴 dictionary
     user_info = cache.GetCache()
-    print(user_info)
+    
+    # main 창을 띄울 객체 선언, user 정보 전달
+    mainWin = WindowManager(user_info)
+    mainWin.OpenWindow_MainMenu()
+    
 
 
 

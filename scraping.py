@@ -28,7 +28,7 @@ class Scraper:
         
         # 화면 전환시 데이터가 바로 로드되지 않아 scraping 되지 않는 문제를 막기위해
         # scaping 대상 페이지에 도착시 sleep() 사용, 아래 변수는 sleep()에 전달할 인자
-        self.sleeping_time = 0.5
+        self.sleeping_time = 1
         
         # self.num_semester: (진행 + 완료) 학기 갯수
         self.num_semester = 0
@@ -37,16 +37,20 @@ class Scraper:
         print()
     # id와 pw를 입력받아 klas에서 로그인 실행
     def AcceseKlas(self,id,pw):
-        # 1. chrome창을 띄어, klas로 이동 
-        self.browser.get(self.url)
-        # 2. id, pw 입력
-        self.browser.find_element(By.ID,"loginId").send_keys(id)
-        self.browser.find_element(By.ID,"loginPwd").send_keys(pw)
-        # 3. 로그인 버튼 클릭
-        self.browser.find_element(By.XPATH,"/html/body/div[1]/div/div/div[2]/form/div[2]/button").click()
         
-        # 만약 로그인 불가 알림창이 나온다면 -1을 반환한다.
-        if(self.WaitPageChange("ax-dialog-header",3)):
+        try:
+            # 1. chrome창을 띄어, klas로 이동 
+            self.browser.get(self.url)
+            # 2. id, pw 입력
+            self.browser.find_element(By.ID,"loginId").send_keys(id)
+            self.browser.find_element(By.ID,"loginPwd").send_keys(pw)
+            # 3. 로그인 버튼 클릭
+            self.browser.find_element(By.XPATH,"/html/body/div[1]/div/div/div[2]/form/div[2]/button").click()
+            
+            # 만약 로그인 불가 알림창이 나온다면 -1을 반환한다.
+            if(self.WaitPageChange("ax-dialog-header",3)):
+                return -2
+        except:
             return -1
         
     # Klas에서 사용자의 Data를 가져와 가공한다.
@@ -164,7 +168,6 @@ class Scraper:
         for i in range(1,len(subjects)+1):
             if(not self.WaitPageChange("scheduletitle")):
                 return 0
-            
             self.ChangeSemester(semester_idx)
             xpath = "/html/body/main/div/div/div/div/div[1]/div[2]/ul/li["+str(i)+"]"
             each_subject_list.append(self.GetEachSubjectsData(xpath))
@@ -192,9 +195,13 @@ class Scraper:
     # 특정 한 학기의 특정 한 과목의 학업 참여도를 종합하여 반환한다. (팀플, 과제, 퀴즈, 출석율)
     # 가장 최근 학기부터 첫 학기 순으로 반환한다.
     def GetEachSubjectsData(self, xpath):
+        
+        # 만약 e-learing이면 0000000 반환하고 걍 패쓰
+        if (not self.WaitPageChange_Xpath(xpath+"/div[2]/button[1]")):
+            return [0,0,0,0,0,0,0,0,0]
+        
         self.browser.find_element(By.XPATH,xpath).click()
-        if(not self.WaitPageChange('oval')):
-            exit(0)
+        self.WaitPageChange('oval')
         
         html = self.browser.page_source
         soup = BeautifulSoup(html, 'lxml')
@@ -311,12 +318,19 @@ class Scraper:
             
         return res
     
-    
     # 어떤 class 이름을 입력으로 주면 해당 class 이름이 현재 url 페이지에 나타날 때까지 기다린다.
     # 10 초 안에 나타나면 데이터 로드할 시간을 좀 더 주고 True 반환, 10 초 이상 안나타나며 False 반환
     def WaitPageChange(self,class_name,term=10):
         try:
             WebDriverWait(self.browser,term).until(EC.presence_of_all_elements_located((By.CLASS_NAME,class_name)))
+            time.sleep(self.sleeping_time)
+        except:
+            return False
+        return True
+    
+    def WaitPageChange_Xpath(self,xpath_name,term=10):
+        try:
+            WebDriverWait(self.browser,term).until(EC.presence_of_all_elements_located((By.XPATH,xpath_name)))
             time.sleep(self.sleeping_time)
         except:
             return False

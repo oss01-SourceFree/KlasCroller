@@ -144,7 +144,6 @@ class Scraper:
     def ScrapingSubjectData(self,semester_idx):
         self.ChangeSemester(semester_idx)
         
-        
         html = self.browser.page_source
         soup = BeautifulSoup(html, 'lxml') #html.parser
         

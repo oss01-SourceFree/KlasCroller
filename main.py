@@ -74,10 +74,12 @@ if __name__ == "__main__":
     
     # user_info : 유저 정보가 담긴 dictionary
     user_info = cache.GetCache()
-    
+    print(user_info)
     # main 창을 띄울 객체 선언, user 정보 전달
     mainWin = WindowManager(user_info)
     mainWin.OpenWindow_MainMenu()
+    
+    os._exit(0)
     
 
 

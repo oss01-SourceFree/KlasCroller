@@ -2,9 +2,17 @@ from tkinter import *
 from tkinter import ttk
 import os
 import sys
-import matplotlib.pyplot as plt
 from functools import partial
 import tkinter.font
+import math
+from math import pi
+import pandas as pd
+import matplotlib
+import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+matplotlib.rcParams['font.family']='Malgun Gothic'
+matplotlib.rcParams['axes.unicode_minus'] = False
 
 # 상대 경로 -> 절대 경로
 def resource_path(relative_path):
@@ -22,6 +30,7 @@ class WindowManager():
         self.id = ''
         self.pw = ''
         
+        self.category = ['의지력', '지능' , '생존력' , '근명성' , '가성비']
         # 유저 정보 ( 의지력 , 지능 , 생존력 , 근명성 , 가성비)
         self.user_info = user_info
         # 전체(완료+현재) 학기 이름 (ex) 2022년 1학기)
@@ -132,7 +141,7 @@ class WindowManager():
         lab2.config(text = "2020603033" + " " + "한수민" + " " + "님", font=font2, foreground='white', background='#7C1B0F')
         lab2.place(x=25,y=170)
 
-        b1 = Button(win_main, text = "완료 학기\n 분석",font=font, bg="white", fg="black",image=img1, compound="left")
+        b1 = Button(win_main, text = "완료 학기\n 분석",font=font, bg="white", fg="black",image=img1, compound="left",command=self.OpenWindow_SelectOne)
         b2 = Button(win_main, text = "학기 간 \n비교 분석", font=font, bg="white", fg="black",image=img2, compound="left")
         b3 = Button(win_main, text = "SF\nMBTI", font=font, bg="white", fg="black",image=img3, compound="left")
         b4 = Button(win_main, text = "취업정보 확인", font=font, bg="white", fg="black",image=img4, compound="left")
@@ -145,48 +154,63 @@ class WindowManager():
     # 학기선택 창 설정
     def OpenWindow_SelectOne(self):
         # 창 설정
-        win_select_1 = Tk()
-        win_select_1.title("학기 선택")
-        win_select_1.geometry("400x300")
-        win_select_1.option_add("*Font", "맑은고딕 25")
-        
-        # 하위 컴포넌트 선언
-        # Button: 학기 수 만큼
-        # Label: 1
-        label_select_1 = Label(win_select_1)
-        button_select_1 = [Button(win_select_1) for _ in range(self.cnt_seme)]
-        
-        # 라벨 설정
-        label_select_1.config(text = "한 개의 학기를 선택하세요.")
-        
-        # 버튼 설정
-        for i in range(self.cnt_seme):
-            button_select_1[i].config(text = self.seme_list[i]
-                                        ,command = partial(self.OpenWindow_OneSemesterAnalysis, i))
-            
-        # 출력
-        label_select_1.pack()
-        for i in range(self.cnt_seme):
-            button_select_1[i].pack()
-        win_select_1.mainloop()
+        win_select_one = Tk()
+        win_select_one.title("학기 선택창")
+        win_select_one.geometry("650x400")
+        win_select_one.resizable(width = FALSE, height = FALSE)
 
-    def OpenWindow_OneSemesterAnalysis(self,semster):
-        # 창 설정
-        win_func_1 = Tk()
-        win_func_1.title("한 학기 분석")
-        win_func_1.geometry("400x300")
-        win_func_1.option_add("*Font", "맑은고딕 25")
         # 하위 컴포넌트 선언
-        # Label : 2
-        label_func_1 = [Label(win_func_1) for _ in range(3)]
+        # Button : 1
+        # Combobox : 2
+        button_select_1 = Button(win_select_one)
+        self.combobox_1 = ttk.Combobox(win_select_one)
         
-        # 라벨 설정
-        label_func_1[1].config(text= "한 학기 분석")
-        label_func_1[1].config(text= str(self.seme_list[semster]))
-        label_func_1[2].config(text= str(self.user_info[self.seme_list[semster]]))
+        #비교 학기 선택창에 콤보박스 생성
+        self.combobox_1.config(height = 20)
+        self.combobox_1.config(value = self.seme_list)
+        self.combobox_1.current(0)
         
-        for i in range(3):
-            label_func_1[i].pack()
+        button_select_1.config(command = self.OpenWindow_OneSemesterAnalysis)
+        
+        #출력
+        self.combobox_1.pack()
+        button_select_1.pack()
+        
+        win_select_one.mainloop()
+    def OpenWindow_OneSemesterAnalysis(self):
+        title = self.combobox_1.get()
+        data_list = self.user_info[title]
+        data_list += data_list[:1]
+        
+        angles = [n/float(5) * 2 *pi for n in range(5)]
+        angles += angles[:1]
+        
+        fig,ax = plt.subplots(1,1,figsize=(3,5),subplot_kw=dict(polar=True))
+        ax.patch.set_facecolor('#7C1B0F')
+        fig.patch.set_facecolor('#7C1B0F')
+        ax.set_theta_offset(pi / 2) ## 시작점
+        ax.set_theta_direction(-1) ## 그려지는 방향 시계방향
+        plt.title(title, size=15, color='white')
+        
+        plt.xticks(angles[:-1],self.category,color='white',size=10)
+        ax.tick_params(axis='x', which='major', pad=5)
+        plt.yticks([20,40,60,80],['20','40','60','80'],color='white',size=10)
+        plt.ylim(0,100)
+        ax.set_rlabel_position(100)
+        
+        ax.plot(angles,data_list,linewidth=3,linestyle='solid',color='#FFFF00')
+        ax.fill(angles,data_list,'#FFFF00',alpha=0.5) 
+        
+        window = Tk()
+        window.config(bg='#7C1B0F')
+        window.title(str(title)+" 학기 분석")
+        window.geometry("650x400")
+        window.resizable(width = FALSE, height = FALSE)
+        
+        canvas = FigureCanvasTkAgg(fig, master=window)
+        canvas.get_tk_widget().pack()
+
+
 
     
     # 두번째 기능 선택 이벤트 핸들러

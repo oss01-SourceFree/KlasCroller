@@ -353,6 +353,33 @@ class WindowManager():
         window_func_2.geometry("650x400")
         window_func_2.resizable(width = FALSE, height = FALSE)
         
+        
+        
+        
+        parameter_label = [Label(window_func_2) for _ in range(5)]
+        # seme_1_label = [Label(window_func_2) for _ in range(5)]
+        # seme_1_label = [Label(window_func_2) for _ in range(5)]
+        value_1_label = [Label(window_func_2) for _ in range(5)]
+        value_2_label = [Label(window_func_2) for _ in range(5)]
+        
+        
+        font1=tkinter.font.Font(family="Malgun Gothic", size=18)
+        font2=tkinter.font.Font(family="Malgun Gothic", size=10)
+        
+        for i in range(5):
+            parameter_label[i].config(text = self.category[i], font = font1, bg='snow', fg = 'black')
+            parameter_label[i].place(x=420, y= 22 + 80*i)
+            
+            string_1 = sem1+"   "+str(list_1[i])
+            value_1_label[i].config(text = string_1, font = font2, bg='#69180D', fg = 'snow')
+            value_1_label[i].place(x=505, y= 8 + 80*i)
+            
+            string_2 = sem2+"   "+ str(list_2[i])
+            value_2_label[i].config(text = string_2, font = font2, bg='#69180D', fg = 'yellow')
+            value_2_label[i].place(x=505, y= 40 + 80*i)
+        
+        
+        
         canvas = FigureCanvasTkAgg(fig, master=window_func_2)
         canvas.get_tk_widget().pack(anchor='w')
         

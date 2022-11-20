@@ -1,12 +1,14 @@
 from tkinter import *
 from tkinter import ttk
+
 import os
 import sys
 from functools import partial
 import tkinter.font
-import math
+from PIL import ImageTk
+
 from math import pi
-import pandas as pd
+
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib import pyplot as plt
@@ -26,11 +28,11 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 class WindowManager():
-    def __init__(self, user_info = {}):
-        self.id = ''
+    def __init__(self, user_info = {}, id = ''):
+        self.id = id
         self.pw = ''
         
-        self.category = ['의지력', '지능' , '생존력' , '근명성' , '가성비']
+        self.category = ['의지력', '지 능' , '생존력' , '근명성' , '가성비']
         # 유저 정보 ( 의지력 , 지능 , 생존력 , 근명성 , 가성비)
         self.user_info = user_info
         # 전체(완료+현재) 학기 이름 (ex) 2022년 1학기)
@@ -49,21 +51,21 @@ class WindowManager():
         
         font=tkinter.font.Font(family="맑은 고딕 25", size=10, weight="bold")
         
-        canvas = Canvas(self.win_lo, width=400, height=500, background='#7C1B0F')
-        canvas.pack(padx=0, pady=0)
-        canvas.place(x=0, y=0)
+        self.can_1 = Canvas(self.win_lo, width=400, height=500, background='#7C1B0F')
+        self.can_1.pack(padx=0, pady=0)
+        self.can_1.place(x=0, y=0)
 
-        can = Canvas(self.win_lo, width=300, height=85, background='#7C1B0F')
-        can.pack(padx=0, pady=0)
-        can.place(x=50, y=55)
+        self.can_2 = Canvas(self.win_lo, width=300, height=85, background='#7C1B0F')
+        self.can_2.pack(padx=0, pady=0)
+        self.can_2.place(x=50, y=55)
 
         file_img1 = resource_path("KlasCroller\\img\\back.png")
         img1 = PhotoImage(file=file_img1)
-        canvas.create_image(200, 250, image=img1)
+        self.can_1.create_image(200, 250, image=img1)
 
         file_img2 = resource_path("KlasCroller\\img\\campus_logo.png")
         img2 = PhotoImage(file=file_img2)
-        can.create_image(157, 45, image=img2)
+        self.can_2.create_image(157, 45, image=img2)
 
         # id 입력창
         self.ent1 = Entry(self.win_lo, relief="groove")
@@ -95,6 +97,10 @@ class WindowManager():
     def EventHandler_Login(self):
         self.id = self.ent1.get()
         self.pw = self.ent2.get()
+        
+        self.can_1.destroy()
+        self.can_2.destroy()
+        
         self.win_lo.destroy()
         
     # 메인메뉴 창 열기
@@ -141,11 +147,11 @@ class WindowManager():
 
         # 사용자 이름(사용자 이름 크롤링 활용해야해요!)
         lab2 = Label(self.win_main)
-        lab2.config(text = "2020603033" + " " + "한수민" + " " + "님", font=font2, foreground='white', background='#7C1B0F')
+        lab2.config(text = str(self.id) + " 님, 반갑습니다.", font=font2, foreground='white', background='#7C1B0F')
         lab2.place(x=25,y=170)
 
-        b1 = Button(self.win_main, text = "완료 학기\n 분석",font=font, bg="white", fg="black",image=img1, compound="left",command=self.OpenWindow_SelectOne)
-        b2 = Button(self.win_main, text = "학기 간 \n비교 분석", font=font, bg="white", fg="black",image=img2, compound="left")
+        b1 = Button(self.win_main, text = "단일 학기\n 분석",font=font, bg="white", fg="black",image=img1, compound="left",command=self.OpenWindow_SelectOne)
+        b2 = Button(self.win_main, text = "두개 학기\n 비교", font=font, bg="white", fg="black",image=img2, compound="left")
         b3 = Button(self.win_main, text = "SF\nMBTI", font=font, bg="white", fg="black",image=img3, compound="left")
         b4 = Button(self.win_main, text = "취업정보 확인", font=font, bg="white", fg="black",image=img4, compound="left")
         b1.place(x=0,y=220,width=250, height=170)
@@ -156,30 +162,56 @@ class WindowManager():
     
     # 학기선택 창 설정
     def OpenWindow_SelectOne(self):
+    
+        # 폰트들 설정
+        font1=tkinter.font.Font(family="휴먼둥근헤드라인", size=20)
+        
         # 창 설정
-        win_select_one = Tk()
-        win_select_one.title("학기 선택창")
-        win_select_one.geometry("650x400")
-        win_select_one.resizable(width = FALSE, height = FALSE)
+        self.win_select_one = Toplevel(self.win_main)
+        self.win_select_one.title("학기 선택창")
+        self.win_select_one.geometry("400x450")
+        self.win_select_one.resizable(width = FALSE, height = FALSE)
+        
+        font=tkinter.font.Font(family="맑은 고딕 25", size=10, weight="bold")
+        
+        canvas = Canvas(self.win_select_one, width=400, height=450, background='#7C1B0F')
+        canvas.pack(padx=0, pady=0)
+        canvas.place(x=0, y=0)
 
+        file_img1 = resource_path("KlasCroller\\img\\back.png")
+        img1 = PhotoImage(file=file_img1)
+        canvas.create_image(200, 250, image=img1)
+        
+        
+        label_title = Label(master=self.win_select_one)
+        label_title.config(text = "[단일 학기 분석]",font=font1,foreground='white', background='#7C1B0F',justify= CENTER)
+        label_title.place(x=95,y=100)
+        
+        label_content = Label(master=self.win_select_one)
+        label_content.config(text = "아래의 드롭다운 메뉴에서\n\n분석하고 싶은 학기를 선택해주세요.\n\n\n 선택된 학기에 대해 \n\n오각 방사 그래프를 출력해드립니다.",font=font,foreground='white', background='#7C1B0F',justify= CENTER)
+        label_content.place(x=95,y=150)
+    
         # 하위 컴포넌트 선언
         # Button : 1
         # Combobox : 2
-        button_select_1 = Button(win_select_one)
-        self.combobox_1 = ttk.Combobox(win_select_one)
         
-        #비교 학기 선택창에 콤보박스 생성
-        self.combobox_1.config(height = 20)
+        # 비교 학기 선택창에 콤보박스 생성
+        self.combobox_1 = ttk.Combobox(self.win_select_one)
+        
+        #Define the style for combobox widget
+        style= ttk.Style()
+        style.configure("TCombobox", fieldbackground= '#C22C18', background= '#C22C18')
+        
         self.combobox_1.config(value = self.seme_list)
         self.combobox_1.current(0)
+        self.combobox_1.place(x=70,y=300,width=260,height=30)
         
-        button_select_1.config(command = self.OpenWindow_OneSemesterAnalysis)
+        button_select_1 = Button(self.win_select_one)
+        button_select_1.config(text="분석",bg='#7C1B0F',fg='snow',font=font,command = self.OpenWindow_OneSemesterAnalysis)
+        button_select_1.place(x=160,y=350,width=80,height=25)
         
-        #출력
-        self.combobox_1.pack()
-        button_select_1.pack()
+        self.win_select_one.mainloop()
         
-        win_select_one.mainloop()
     def OpenWindow_OneSemesterAnalysis(self):
         title = self.combobox_1.get()
         data_list = self.user_info[title]
@@ -197,21 +229,34 @@ class WindowManager():
         
         plt.xticks(angles[:-1],self.category,color='white',size=10)
         ax.tick_params(axis='x', which='major', pad=5)
-        plt.yticks([20,40,60,80],['20','40','60','80'],color='white',size=10)
+        plt.yticks([20,40,60,80],['','','',''],color='white',size=10)
         plt.ylim(0,100)
         ax.set_rlabel_position(100)
         
         ax.plot(angles,data_list,linewidth=3,linestyle='solid',color='#FFFF00')
         ax.fill(angles,data_list,'#FFFF00',alpha=0.5) 
         
-        window = Tk()
+        window = Toplevel(self.win_select_one)
         window.config(bg='#7C1B0F')
         window.title(str(title)+" 학기 분석")
         window.geometry("650x400")
         window.resizable(width = FALSE, height = FALSE)
         
+        parameter_label = [Label(window) for _ in range(5)]
+        value_label = [Label(window) for _ in range(5)]
+        
+        font1=tkinter.font.Font(family="Malgun Gothic", size=22)
+        font2=tkinter.font.Font(family="Malgun Gothic", size=18)
+        
+        for i in range(5):
+            parameter_label[i].config(text = self.category[i], font = font1, bg='#69180D', fg = 'yellow')
+            parameter_label[i].place(x=400, y= 20 + 80*i)
+            
+            value_label[i].config(text = self.user_info[title][i], font = font2, bg='#69180D', fg = 'snow')
+            value_label[i].place(x=550, y= 20 + 80*i)
+        
         canvas = FigureCanvasTkAgg(fig, master=window)
-        canvas.get_tk_widget().pack()
+        canvas.get_tk_widget().pack(anchor='w')
 
 
 

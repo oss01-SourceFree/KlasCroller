@@ -159,7 +159,7 @@ class WindowManager():
 
         b1 = Button(self.win_main, text = "단일 학기\n 분석",font=font, bg="white", fg="black",image=img1, compound="left",command=self.OpenWindow_Notice_Function1)
         b2 = Button(self.win_main, text = "두개 학기\n 비교", font=font, bg="white", fg="black",image=img2, compound="left",command=self.OpenWindow_Notice_Function2)
-        b3 = Button(self.win_main, text = "SF\nMBTI", font=font, bg="white", fg="black",image=img3, compound="left")
+        b3 = Button(self.win_main, text = "SF\nMBTI", font=font, bg="white", fg="black",image=img3, compound="left",command=self.OpenWindow_Notice_Function3)
         b4 = Button(self.win_main, text = "취업정보 확인", font=font, bg="white", fg="black",image=img4, compound="left")
         b1.place(x=0,y=220,width=250, height=170)
         b2.place(x=250,y=220,width=250, height=170)
@@ -169,7 +169,7 @@ class WindowManager():
     
     
     
-    # 학기선택 창 설정
+    # 첫번째 기능 알림 창 open
     def OpenWindow_Notice_Function1(self):
         # main 창 제외하고 열린 창은 모두 닫기
         if self.is_opend_win_func1 :
@@ -285,7 +285,7 @@ class WindowManager():
 
 
 
-    # 두번째 기능 선택 이벤트 핸들러
+    # 두번째 기능 알림 창 open
     def OpenWindow_Notice_Function2(self):
         # main 창 제외하고 열린 창은 모두 닫기
         if self.is_opend_win_func1 :
@@ -411,9 +411,6 @@ class WindowManager():
             string_2 = sem2+"   "+ str(list_2[i])
             value_2_label[i].config(text = string_2, font = font2, bg='#69180D', fg = 'yellow')
             value_2_label[i].place(x=505, y= 40 + 80*i)
-        
-        
-        
         canvas = FigureCanvasTkAgg(fig, master=window_func_2)
         canvas.get_tk_widget().pack(anchor='w')
         
@@ -423,27 +420,66 @@ class WindowManager():
         
         
         
+    # 세번째 기능 알림 창 open
+    def OpenWindow_Notice_Function3(self):
+        # main 창 제외하고 열린 창은 모두 닫기
+        if self.is_opend_win_func1 :
+            self.win_notice_func1.destroy()
+            self.is_opend_win_func1 = False
+        if self.is_opend_win_func2 :
+            self.win_notice_func2.destroy()
+            self.is_opend_win_func2 = False
+        if self.is_opend_win_func3 :
+            self.win_notice_func3.destroy()
+            self.is_opend_win_func3 = False
+        if self.is_opend_win_func4 :
+            self.win_notice_func4.destroy()
+            self.is_opend_win_func4 = False
+            
+        # func3 창이 열림
+        self.is_opend_win_func3 = True
+            
+        # 폰트들 설정
+        font=tkinter.font.Font(family="맑은 고딕 25", size=10, weight="bold")
+        font1=tkinter.font.Font(family="휴먼둥근헤드라인", size=20)
         
+        # 창 설정
+        self.win_notice_func3 = Toplevel(self.win_main)
+        self.win_notice_func3.title("학기 선택창")
+        self.win_notice_func3.geometry("400x450")
+        self.win_notice_func3.resizable(width = FALSE, height = FALSE)
         
+        canvas = Canvas(self.win_notice_func3, width=400, height=450, background='#7C1B0F')
+        canvas.pack(padx=0, pady=0)
+        canvas.place(x=0, y=0)
+
+        file_img1 = resource_path("KlasCroller\\img\\back.png")
+        img1 = PhotoImage(file=file_img1)
+        canvas.create_image(200, 250, image=img1)
         
+        label_title = Label(master=self.win_notice_func3)
+        label_title.config(text = "[SF MBTI]",font=font1,foreground='white', background='#7C1B0F',justify= CENTER)
+        label_title.place(x=110,y=100)
         
+        label_content = Label(master=self.win_notice_func3)
+        label_content.config(text = " 지난 학기동안 당신은 어떻게\n\n학업을 수행하셨을까요?\n\n\n당신의 학업 성취 스타일과 맞는\n\n동물 사진을 출력해드립니다.",font=font,foreground='white', background='#7C1B0F',justify= CENTER)
+        label_content.place(x=95,y=150)
         
+        button_select_1 = Button(self.win_notice_func3, command= self.OpenWindow_PrintUserStyle)
+        button_select_1.config(text="확인하기",bg='#7C1B0F',fg='snow',font=font)
+        button_select_1.place(x=160,y=350,width=80,height=25)
         
+        self.win_notice_func3.mainloop()
         
-    # 세번째 기능 선택 이벤트 핸들러
-    def FuncEventHandler3(self):
-        self.win_sem3 = Tk()
-        self.win_sem3.title("Klas semester3")
-        self.win_sem3.geometry("400x300")
-        self.win_sem3.option_add("*Font", "맑은고딕 25")
-        idx = len(self.sem_list)-1
-        self.label1 = Label(self.win_sem3, text = self.sem_list[idx] + "학기 학점 결과보기")
-        self.label1.pack()
+    def OpenWindow_PrintUserStyle(self):
+        window_func_3 = Toplevel(self.win_notice_func3)
+        window_func_3.config(bg='#7C1B0F')
+        window_func_3.title('hi')
+        window_func_3.geometry("650x400")
+        window_func_3.resizable(width = FALSE, height = FALSE)
         
-    def Exit_Window_x(self):
-        self.win_lo.destroy()
-        self.win_main.destroy()
-        os._exit(0)
+        Label(text="안녕하세요.....").place(1,1)
+        
         
 class SubBoxManager():
     def __init__(self):
@@ -483,4 +519,3 @@ class SubBoxManager():
     def Check_Ok(self):
         self.win_message.destroy()
         
-    

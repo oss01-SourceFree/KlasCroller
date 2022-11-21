@@ -1,12 +1,14 @@
 from tkinter import *
 from tkinter import ttk
+
 import os
 import sys
 from functools import partial
 import tkinter.font
-import math
+
 from math import pi
-import pandas as pd
+
+import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib import pyplot as plt
@@ -26,17 +28,20 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 class WindowManager():
-    def __init__(self, user_info = {}):
-        self.id = ''
+    def __init__(self, user_info = {}, id = ''):
+        self.id = id
         self.pw = ''
         
-        self.category = ['의지력', '지능' , '생존력' , '근명성' , '가성비']
+        self.category = ['의지력', '지 능' , '생존력' , '근명성' , '가성비']
         # 유저 정보 ( 의지력 , 지능 , 생존력 , 근명성 , 가성비)
         self.user_info = user_info
         # 전체(완료+현재) 학기 이름 (ex) 2022년 1학기)
         self.seme_list = list(user_info.keys())
         # 전체(완료+현재) 학기 수
         self.cnt_seme = len(user_info)
+        
+        self.win_select_one = -1
+        self.win_select_two = -1
         
     # 로그인 용 Window 열기
     def OpenWindow_Login(self):
@@ -49,21 +54,21 @@ class WindowManager():
         
         font=tkinter.font.Font(family="맑은 고딕 25", size=10, weight="bold")
         
-        canvas = Canvas(self.win_lo, width=400, height=500, background='#7C1B0F')
-        canvas.pack(padx=0, pady=0)
-        canvas.place(x=0, y=0)
+        self.can_1 = Canvas(self.win_lo, width=400, height=500, background='#7C1B0F')
+        self.can_1.pack(padx=0, pady=0)
+        self.can_1.place(x=0, y=0)
 
-        can = Canvas(self.win_lo, width=300, height=85, background='#7C1B0F')
-        can.pack(padx=0, pady=0)
-        can.place(x=50, y=55)
+        self.can_2 = Canvas(self.win_lo, width=300, height=85, background='#7C1B0F')
+        self.can_2.pack(padx=0, pady=0)
+        self.can_2.place(x=50, y=55)
 
         file_img1 = resource_path("KlasCroller\\img\\back.png")
         img1 = PhotoImage(file=file_img1)
-        canvas.create_image(200, 250, image=img1)
+        self.can_1.create_image(200, 250, image=img1)
 
         file_img2 = resource_path("KlasCroller\\img\\campus_logo.png")
         img2 = PhotoImage(file=file_img2)
-        can.create_image(157, 45, image=img2)
+        self.can_2.create_image(157, 45, image=img2)
 
         # id 입력창
         self.ent1 = Entry(self.win_lo, relief="groove")
@@ -95,6 +100,10 @@ class WindowManager():
     def EventHandler_Login(self):
         self.id = self.ent1.get()
         self.pw = self.ent2.get()
+        
+        self.can_1.destroy()
+        self.can_2.destroy()
+        
         self.win_lo.destroy()
         
     # 메인메뉴 창 열기
@@ -141,11 +150,11 @@ class WindowManager():
 
         # 사용자 이름(사용자 이름 크롤링 활용해야해요!)
         lab2 = Label(self.win_main)
-        lab2.config(text = "2020603033" + " " + "한수민" + " " + "님", font=font2, foreground='white', background='#7C1B0F')
+        lab2.config(text = str(self.id) + " 님, 반갑습니다.", font=font2, foreground='white', background='#7C1B0F')
         lab2.place(x=25,y=170)
 
-        b1 = Button(self.win_main, text = "완료 학기\n 분석",font=font, bg="white", fg="black",image=img1, compound="left",command=self.OpenWindow_SelectOne)
-        b2 = Button(self.win_main, text = "학기 간 \n비교 분석", font=font, bg="white", fg="black",image=img2, compound="left")
+        b1 = Button(self.win_main, text = "단일 학기\n 분석",font=font, bg="white", fg="black",image=img1, compound="left",command=self.OpenWindow_SelectOne)
+        b2 = Button(self.win_main, text = "두개 학기\n 비교", font=font, bg="white", fg="black",image=img2, compound="left",command=self.OpenWindow_SelectTwo)
         b3 = Button(self.win_main, text = "SF\nMBTI", font=font, bg="white", fg="black",image=img3, compound="left")
         b4 = Button(self.win_main, text = "취업정보 확인", font=font, bg="white", fg="black",image=img4, compound="left")
         b1.place(x=0,y=220,width=250, height=170)
@@ -154,34 +163,57 @@ class WindowManager():
         b4.place(x=250,y=390,width=250, height=170);
         self.win_main.mainloop()
     
+    
+    
     # 학기선택 창 설정
     def OpenWindow_SelectOne(self):
+        if self.win_select_two != -1:
+            self.win_select_two.destroy()
+            self.win_select_two = -1
+            
+        # 폰트들 설정
+        font1=tkinter.font.Font(family="휴먼둥근헤드라인", size=20)
+        
         # 창 설정
-        win_select_one = Tk()
-        win_select_one.title("학기 선택창")
-        win_select_one.geometry("650x400")
-        win_select_one.resizable(width = FALSE, height = FALSE)
+        self.win_select_one = Toplevel(self.win_main)
+        self.win_select_one.title("학기 선택창")
+        self.win_select_one.geometry("400x450")
+        self.win_select_one.resizable(width = FALSE, height = FALSE)
+        
+        font=tkinter.font.Font(family="맑은 고딕 25", size=10, weight="bold")
+        
+        canvas = Canvas(self.win_select_one, width=400, height=450, background='#7C1B0F')
+        canvas.pack(padx=0, pady=0)
+        canvas.place(x=0, y=0)
 
-        # 하위 컴포넌트 선언
-        # Button : 1
-        # Combobox : 2
-        button_select_1 = Button(win_select_one)
-        self.combobox_1 = ttk.Combobox(win_select_one)
+        file_img1 = resource_path("KlasCroller\\img\\back.png")
+        img1 = PhotoImage(file=file_img1)
+        canvas.create_image(200, 250, image=img1)
         
-        #비교 학기 선택창에 콤보박스 생성
-        self.combobox_1.config(height = 20)
-        self.combobox_1.config(value = self.seme_list)
-        self.combobox_1.current(0)
         
-        button_select_1.config(command = self.OpenWindow_OneSemesterAnalysis)
+        label_title = Label(master=self.win_select_one)
+        label_title.config(text = "[단일 학기 분석]",font=font1,foreground='white', background='#7C1B0F',justify= CENTER)
+        label_title.place(x=95,y=100)
         
-        #출력
-        self.combobox_1.pack()
-        button_select_1.pack()
+        label_content = Label(master=self.win_select_one)
+        label_content.config(text = "아래의 드롭다운 메뉴에서\n\n분석하고 싶은 학기를 선택해주세요.\n\n\n 선택된 학기에 대해 \n\n오각 방사 그래프를 출력해드립니다.",font=font,foreground='white', background='#7C1B0F',justify= CENTER)
+        label_content.place(x=95,y=150)
         
-        win_select_one.mainloop()
+        # 비교 학기 선택창에 콤보박스 생성
+        self.combobox_1_1 = ttk.Combobox(self.win_select_one)
+        
+        self.combobox_1_1.config(value = self.seme_list)
+        self.combobox_1_1.current(0)
+        self.combobox_1_1.place(x=70,y=300,width=260,height=30)
+        
+        button_select_1 = Button(self.win_select_one)
+        button_select_1.config(text="분석",bg='#7C1B0F',fg='snow',font=font,command = self.OpenWindow_OneSemesterAnalysis)
+        button_select_1.place(x=160,y=350,width=80,height=25)
+        
+        self.win_select_one.mainloop()
+        
     def OpenWindow_OneSemesterAnalysis(self):
-        title = self.combobox_1.get()
+        title = self.combobox_1_1.get()
         data_list = self.user_info[title]
         data_list += data_list[:1]
         
@@ -197,65 +229,172 @@ class WindowManager():
         
         plt.xticks(angles[:-1],self.category,color='white',size=10)
         ax.tick_params(axis='x', which='major', pad=5)
-        plt.yticks([20,40,60,80],['20','40','60','80'],color='white',size=10)
+        plt.yticks([20,40,60,80],['','','',''],color='white',size=10)
         plt.ylim(0,100)
         ax.set_rlabel_position(100)
         
         ax.plot(angles,data_list,linewidth=3,linestyle='solid',color='#FFFF00')
         ax.fill(angles,data_list,'#FFFF00',alpha=0.5) 
         
-        window = Tk()
+        window = Toplevel(self.win_select_one)
         window.config(bg='#7C1B0F')
         window.title(str(title)+" 학기 분석")
         window.geometry("650x400")
         window.resizable(width = FALSE, height = FALSE)
         
+        parameter_label = [Label(window) for _ in range(5)]
+        value_label = [Label(window) for _ in range(5)]
+        
+        font1=tkinter.font.Font(family="Malgun Gothic", size=22)
+        font2=tkinter.font.Font(family="Malgun Gothic", size=18)
+        
+        for i in range(5):
+            parameter_label[i].config(text = self.category[i], font = font1, bg='#69180D', fg = 'yellow')
+            parameter_label[i].place(x=400, y= 20 + 80*i)
+            
+            value_label[i].config(text = self.user_info[title][i], font = font2, bg='#69180D', fg = 'snow')
+            value_label[i].place(x=550, y= 20 + 80*i)
+        
         canvas = FigureCanvasTkAgg(fig, master=window)
-        canvas.get_tk_widget().pack()
+        canvas.get_tk_widget().pack(anchor='w')
 
 
 
-    
+
+
+
+
+
+
+
+
     # 두번째 기능 선택 이벤트 핸들러
     def OpenWindow_SelectTwo(self):
+        if self.win_select_one != -1:
+            self.win_select_one.destroy()
+            self.win_select_one = -1
+        # 폰트들 설정
+        font1=tkinter.font.Font(family="휴먼둥근헤드라인", size=20)
+        
         # 창 설정
-        win_select_two = Tk()
-        win_select_two.title("비교 학기 선택창")
-        win_select_two.geometry("650x400")
-        win_select_two.resizable(width = FALSE, height = FALSE)
+        self.win_select_two = Toplevel(self.win_main)
+        self.win_select_two.title("학기 선택창")
+        self.win_select_two.geometry("400x450")
+        self.win_select_two.resizable(width = FALSE, height = FALSE)
+        
+        font=tkinter.font.Font(family="맑은 고딕 25", size=10, weight="bold")
+        
+        canvas = Canvas(self.win_select_two, width=400, height=450, background='#7C1B0F')
+        canvas.pack(padx=0, pady=0)
+        canvas.place(x=0, y=0)
 
+        file_img1 = resource_path("KlasCroller\\img\\back.png")
+        img1 = PhotoImage(file=file_img1)
+        canvas.create_image(200, 250, image=img1)
+        
+        
+        label_title = Label(master=self.win_select_two)
+        label_title.config(text = "[두 개 학기 비교]",font=font1,foreground='white', background='#7C1B0F',justify= CENTER)
+        label_title.place(x=90,y=100)
+        
+        label_content = Label(master=self.win_select_two)
+        label_content.config(
+            text = "아래의 드롭다운 메뉴에서\n\n비교하고 싶은 학기를 선택해주세요.\n\n\n 선택된 학기에 대해 \n\n막대 그래프를 출력해드립니다.",
+            font=font,
+            foreground='white',
+            background='#7C1B0F',
+            justify= CENTER)
+        label_content.place(x=95,y=150)
+    
         # 하위 컴포넌트 선언
         # Button : 1
         # Combobox : 2
-        button_select_two = Button(win_select_two)
-        self.combobox_1 = ttk.Combobox(win_select_two)
-        self.combobox_2 = ttk.Combobox(win_select_two)
         
-        #비교 학기 선택창에 콤보박스 생성
-        self.combobox_1.config(height = 20)
-        self.combobox_1.config(value = self.seme_list)
-        self.combobox_1.current(0)
-
-        self.combobox_2.config(height = 20)
-        self.combobox_2.config(value = self.seme_list)
-        self.combobox_2.current(0)
-        button_select_two.config(command = self.OpenWindow_TwoSemesterCompare)
+        # 비교 학기 선택창에 콤보박스 생성
+        self.combobox_2_1 = ttk.Combobox(self.win_select_two)
+        self.combobox_2_2 = ttk.Combobox(self.win_select_two)
         
+        self.combobox_2_1.config(value = self.seme_list)
+        self.combobox_2_1.current(0)
+        self.combobox_2_1.place(x=70,y=300,width=260,height=30)
         
-        #출력
-        self.combobox_1.pack()
-        self.combobox_2.pack()
-        button_select_two.pack()
+        self.combobox_2_2.config(value = self.seme_list)
+        self.combobox_2_2.current(0)
+        self.combobox_2_2.place(x=70,y=350,width=260,height=30)
         
-        win_select_two.mainloop()
+        button_select_2 = Button(self.win_select_two)
+        button_select_2.config(text="분석",bg='#7C1B0F',fg='snow',font=font,command = self.OpenWindow_TwoSemesterCompare)
+        button_select_2.place(x=160,y=400,width=80,height=25)
+        
+        self.win_select_two.mainloop()
         
     def OpenWindow_TwoSemesterCompare(self):
-        list_1 = self.user_info[self.combobox_1.get()]
-        list_2 = self.user_info[self.combobox_2.get()]
+        sem1 = self.combobox_2_1.get()
+        sem2 = self.combobox_2_2.get()
+        list_1 = self.user_info[sem1]
+        list_2 = self.user_info[sem2]
         
-        print(list_1)
-        print(list_2)
-        print()
+        x = np.arange(len(self.category))
+        width = 0.3
+            
+        fig, ax =plt.subplots(figsize=(4,5))
+        ax.patch.set_facecolor('#7C1B0F')
+        fig.patch.set_facecolor('#7C1B0F')
+        plt.bar(x, list_1, width, color='#FFFFFF',alpha = 0.5, edgecolor = '#FFFFFF', linewidth = 2)
+        plt.bar(x + width+0.1, list_2, width, color='#FFFF00',alpha = 0.5, edgecolor = '#FFFF00', linewidth = 2)
+        plt.xticks(x+width, self.category, color ='white')
+        plt.yticks(color='white')
+        
+        plt.title(sem1+' vs '+sem2,color='white')
+        
+        window_func_2 = Toplevel(self.win_select_two)
+        window_func_2.config(bg='#7C1B0F')
+        window_func_2.title(sem1+','+sem2+" 학기 비교")
+        window_func_2.geometry("650x400")
+        window_func_2.resizable(width = FALSE, height = FALSE)
+        
+        
+        
+        
+        parameter_label = [Label(window_func_2) for _ in range(5)]
+        # seme_1_label = [Label(window_func_2) for _ in range(5)]
+        # seme_1_label = [Label(window_func_2) for _ in range(5)]
+        value_1_label = [Label(window_func_2) for _ in range(5)]
+        value_2_label = [Label(window_func_2) for _ in range(5)]
+        
+        
+        font1=tkinter.font.Font(family="Malgun Gothic", size=18)
+        font2=tkinter.font.Font(family="Malgun Gothic", size=10)
+        
+        for i in range(5):
+            parameter_label[i].config(text = self.category[i], font = font1, bg='snow', fg = 'black')
+            parameter_label[i].place(x=420, y= 22 + 80*i)
+            
+            string_1 = sem1+"   "+str(list_1[i])
+            value_1_label[i].config(text = string_1, font = font2, bg='#69180D', fg = 'snow')
+            value_1_label[i].place(x=505, y= 8 + 80*i)
+            
+            string_2 = sem2+"   "+ str(list_2[i])
+            value_2_label[i].config(text = string_2, font = font2, bg='#69180D', fg = 'yellow')
+            value_2_label[i].place(x=505, y= 40 + 80*i)
+        
+        
+        
+        canvas = FigureCanvasTkAgg(fig, master=window_func_2)
+        canvas.get_tk_widget().pack(anchor='w')
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
     # 세번째 기능 선택 이벤트 핸들러
     def FuncEventHandler3(self):

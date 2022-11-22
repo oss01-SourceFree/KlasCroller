@@ -41,13 +41,6 @@ class WindowManager():
         # 전체(완료+현재) 학기 수
         self.cnt_seme = len(user_info)
         
-        # 하나의 기능 창만 열릴 수 있도록
-        # boolean 형 변수 초기화
-        self.is_opend_win_func1 = False
-        self.is_opend_win_func2 = False
-        self.is_opend_win_func3 = False
-        self.is_opend_win_func4 = False
-        
     # 로그인 용 Window 열기
     def OpenWindow_Login(self):
         # 창 설정
@@ -113,6 +106,19 @@ class WindowManager():
         
     # 메인메뉴 창 열기
     def OpenWindow_MainMenu(self):
+        # 하나의 기능 창만 열릴 수 있도록
+        # boolean 형 변수 초기화
+        self.is_opend_win_func1 = False
+        self.is_opend_win_func2 = False
+        self.is_opend_win_func3 = False
+        self.is_opend_win_func4 = False
+        
+        self.win_notice_func1 = -1
+        self.win_notice_func2 = -1
+        self.win_notice_func3 = -1
+        self.win_notice_func4 = -1
+        
+        
         # 창 설정
         self.win_main = Tk()
         self.win_main.title("Main Menu")
@@ -175,15 +181,19 @@ class WindowManager():
         # main 창 제외하고 열린 창은 모두 닫기
         if self.is_opend_win_func1 :
             self.win_notice_func1.destroy()
+            self.win_notice_func1 = -1
             self.is_opend_win_func1 = False
         if self.is_opend_win_func2 :
             self.win_notice_func2.destroy()
+            self.win_notice_func2 = -1
             self.is_opend_win_func2 = False
         if self.is_opend_win_func3 :
             self.win_notice_func3.destroy()
+            self.win_notice_func3 = -1
             self.is_opend_win_func3 = False
         # if self.is_opend_win_func4 :
         #     self.win_notice_func4.destroy()
+        #     self.win_notice_func4 = -1
         #     self.is_opend_win_func4 = False
             
         # func1 창이 열림
@@ -290,28 +300,32 @@ class WindowManager():
         # main 창 제외하고 열린 창은 모두 닫기
         if self.is_opend_win_func1 :
             self.win_notice_func1.destroy()
+            self.win_notice_func1 = -1
             self.is_opend_win_func1 = False
         if self.is_opend_win_func2 :
             self.win_notice_func2.destroy()
+            self.win_notice_func2 = -1
             self.is_opend_win_func2 = False
         if self.is_opend_win_func3 :
             self.win_notice_func3.destroy()
+            self.win_notice_func3 = -1
             self.is_opend_win_func3 = False
         # if self.is_opend_win_func4 :
         #     self.win_notice_func4.destroy()
+        #     self.win_notice_func4 = -1
         #     self.is_opend_win_func4 = False
             
         # func2 창이 열림
         self.is_opend_win_func2 = True
-        
-        # 폰트들 설정
-        font1=tkinter.font.Font(family="휴먼둥근헤드라인", size=20)
         
         # 창 설정
         self.win_notice_func2 = Toplevel(self.win_main)
         self.win_notice_func2.title("두 학기 비교 알림")
         self.win_notice_func2.geometry("400x450")
         self.win_notice_func2.resizable(width = FALSE, height = FALSE)
+        
+        # 폰트들 설정
+        font1=tkinter.font.Font(family="휴먼둥근헤드라인", size=20)
         
         font=tkinter.font.Font(family="맑은 고딕 25", size=10, weight="bold")
         
@@ -421,15 +435,19 @@ class WindowManager():
         # main 창 제외하고 열린 창은 모두 닫기
         if self.is_opend_win_func1 :
             self.win_notice_func1.destroy()
+            self.win_notice_func1 = -1
             self.is_opend_win_func1 = False
         if self.is_opend_win_func2 :
             self.win_notice_func2.destroy()
+            self.win_notice_func2 = -1
             self.is_opend_win_func2 = False
         if self.is_opend_win_func3 :
             self.win_notice_func3.destroy()
+            self.win_notice_func3 = -1
             self.is_opend_win_func3 = False
         # if self.is_opend_win_func4 :
         #     self.win_notice_func4.destroy()
+        #     self.win_notice_func4 = -1
         #     self.is_opend_win_func4 = False
             
         # func3 창이 열림

@@ -23,7 +23,7 @@ class Scraper:
         창을 띄우지 않으려면 아래 # options.add_argument('headless') 코드의 주석을 해제하면 됩니다.
         '''
         options = webdriver.ChromeOptions()
-        # options.add_argument('headless')
+        options.add_argument('headless')
         self.browser = webdriver.Chrome(ChromeDriverManager().install(),options=options)
         
         # 화면 전환시 데이터가 바로 로드되지 않아 scraping 되지 않는 문제를 막기위해

@@ -5,7 +5,7 @@ import os
 import sys
 import tkinter.font
 
-from PIL import Image, ImageTk
+import webbrowser
 
 from math import pi
 
@@ -14,8 +14,10 @@ import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-matplotlib.rcParams['font.family']='Malgun Gothic'
+matplotlib.rcParams['font.family']='NanumGothic'
 matplotlib.rcParams['axes.unicode_minus'] = False
+
+from caching import CacheManager
 
 # 상대 경로 -> 절대 경로
 def resource_path(relative_path):
@@ -33,13 +35,14 @@ class WindowManager():
         self.id = id
         self.pw = ''
         
-        self.category = ['의지력', '지 능' , '생존력' , '근명성' , '가성비']
-        # 유저 정보 ( 의지력 , 지능 , 생존력 , 근명성 , 가성비)
+        self.category = ['의지력', '사고력' , '생존력' , '근명성' , '가성비']
+        # 유저 정보 ( 의지력 , 사고력 , 생존력 , 근명성 , 가성비)
         self.user_info = user_info
         # 전체(완료+현재) 학기 이름 (ex) 2022년 1학기)
         self.seme_list = list(user_info.keys())
         # 전체(완료+현재) 학기 수
         self.cnt_seme = len(user_info)
+        
         
     # 로그인 용 Window 열기
     def OpenWindow_Login(self):
@@ -48,9 +51,9 @@ class WindowManager():
         self.win_lo.title("Klas Log-in")
         self.win_lo.geometry("400x500")
         
-        # self.win_lo.protocol('WM_DELETE_WINDOW',self.Exit_Window_Login_x)
-        
-        font=tkinter.font.Font(family="맑은 고딕 25", size=10, weight="bold")
+        # 폰트들 설정
+        self.font1=tkinter.font.Font(family="나눔스퀘어라운드 ExtraBold", size=20, weight="bold")
+        self.font2=tkinter.font.Font(family="나눔스퀘어라운드 ExtraBold", size=10, weight="bold")  
         
         self.can_1 = Canvas(self.win_lo, width=400, height=500, background='#7C1B0F', highlightthickness = 0)
         self.can_1.pack(padx=0, pady=0)
@@ -60,9 +63,9 @@ class WindowManager():
         self.can_2.pack(padx=0, pady=0)
         self.can_2.place(x=50, y=55)
 
-        file_img1 = resource_path("KlasCroller\\img\\back.png")
-        img1 = PhotoImage(file=file_img1)
-        self.can_1.create_image(200, 250, image=img1)
+        # 배경 이미지
+        img = PhotoImage(file=resource_path("KlasCroller\\img\\back.png"))
+        self.can_1.create_image(200, 250, image=img)
 
         file_img2 = resource_path("KlasCroller\\img\\campus_logo.png")
         img2 = PhotoImage(file=file_img2)
@@ -83,7 +86,7 @@ class WindowManager():
         self.ent2.config(show="*")
         self.ent2.place(x=50,y=270,width=300,height=35)
         
-        btn = Button(self.win_lo, font=font, bg="white", fg="black")
+        btn = Button(self.win_lo, font=self.font2, bg="white", fg="black")
         btn.config(text = "로그인")
         btn.place(x=150,y=350,width=100,height=40)
         btn.config(command=self.EventHandler_Login)
@@ -118,20 +121,11 @@ class WindowManager():
         self.win_notice_func3 = -1
         self.win_notice_func4 = -1
         
-        
         # 창 설정
         self.win_main = Tk()
         self.win_main.title("Main Menu")
         self.win_main.geometry("500x560") # 가로 세로
         self.win_main.resizable(True, True)
-        
-        self.win_main.protocol('WM_DELETE_WINDOW',self.win_main.iconify)
-        self.win_main.bind('<Escape>', lambda e: self.win_main.destroy())
-        
-        # 폰트들 설정
-        font=tkinter.font.Font(family="맑은 고딕 25", size=10, weight="bold")
-        font1=tkinter.font.Font(family="휴먼둥근헤드라인", size=30)#, weight="bold")
-        font2=tkinter.font.Font(family="휴먼둥근헤드라인", size=17)
         
         can = Canvas(self.win_main, width=500, height=230,background='red', highlightthickness = 0)
         can.pack(padx=0, pady=0)
@@ -143,38 +137,53 @@ class WindowManager():
         can.create_image(0,0,image=back)
 
         # 각 기능 버튼에 해당하는 이미지들
-        file_img1 = resource_path("KlasCroller\img\img1.png")
-        img1 = PhotoImage(file=file_img1)
+        img1 = PhotoImage(file=resource_path("KlasCroller\img\img_analysis_black.png"))
 
-        file_img2 = resource_path("KlasCroller\img\img2.png")
-        img2 = PhotoImage(file=file_img2)
+        img2 = PhotoImage(file=resource_path("KlasCroller\img\img_compare_black.png"))
 
-        file_img3 = resource_path("KlasCroller\img\img3.png")
-        img3 = PhotoImage(file=file_img3)
+        img3 = PhotoImage(file=resource_path("KlasCroller\img\img_mbti_black.png"))
 
-        file_img4 = resource_path("KlasCroller\img\img4.png")
-        img4 = PhotoImage(file=file_img4)
+        img4 = PhotoImage(file=resource_path("KlasCroller\img\img_search_black.png"))
+        
+        # 폰트들 설정
+        self.font0=tkinter.font.Font(family="나눔스퀘어라운드 ExtraBold", size=30, weight="bold")
+        self.font1=tkinter.font.Font(family="나눔스퀘어라운드 ExtraBold", size=20, weight="bold")
+        self.font2=tkinter.font.Font(family="나눔스퀘어라운드 ExtraBold", size=10, weight="bold")  
 
         lab1 = Label(self.win_main)
-        lab1.config(text = "기능선택", font=font1, foreground='white', background='#7C1B0F')
+        lab1.config(text = "KlasCroller", font=self.font0, foreground='white', background='#7C1B0F')
         lab1.place(x=25,y=25)
 
-        # 사용자 이름(사용자 이름 크롤링 활용해야해요!)
+        # 사용자 학번
         lab2 = Label(self.win_main)
-        lab2.config(text = str(self.id) + " 님, 반갑습니다.", font=font2, foreground='white', background='#7C1B0F')
+        lab2.config(text = str(self.id) + " 님, 반갑습니다.", font=self.font1, foreground='white', background='#7C1B0F')
         lab2.place(x=25,y=170)
 
-        b1 = Button(self.win_main, text = "단일 학기\n 분석",font=font, bg="white", fg="black",image=img1, compound="left",command=self.OpenWindow_Notice_Function1)
-        b2 = Button(self.win_main, text = "두개 학기\n 비교", font=font, bg="white", fg="black",image=img2, compound="left",command=self.OpenWindow_Notice_Function2)
-        b3 = Button(self.win_main, text = "SF\nMBTI", font=font, bg="white", fg="black",image=img3, compound="left",command=self.OpenWindow_Notice_Function3)
-        b4 = Button(self.win_main, text = "취업정보 확인", font=font, bg="white", fg="black",image=img4, compound="left")
+        b1 = Button(self.win_main, text = "단일 학기\n 분석",font=self.font2, bg="white", fg="black",image=img1, compound="left",command=self.OpenWindow_Notice_Function1)
+        b2 = Button(self.win_main, text = "두개 학기\n 비교", font=self.font2, bg="white", fg="black",image=img2, compound="left",command=self.OpenWindow_Notice_Function2)
+        b3 = Button(self.win_main, text = "SF\nMBTI", font=self.font2, bg="white", fg="black",image=img3, compound="left",command=self.OpenWindow_Notice_Function3)
+        b4 = Button(self.win_main, text = "취업정보 확인", font=self.font2, bg="white", fg="black",image=img4, compound="left",command=self.OpenWindow_Notice_Function4)
         b1.place(x=0,y=220,width=250, height=170)
         b2.place(x=250,y=220,width=250, height=170)
         b3.place(x=0,y=390,width=250, height=170)
         b4.place(x=250,y=390,width=250, height=170);
+        
+        
+        # 캐시파일 삭제
+        Button(self.win_main,
+            text="계정 초기화",
+            bg='#7C1B0F',
+            fg='snow',
+            font=self.font2,
+            command = self.Delete_userInfo
+            ).place(x=400,y=20,width=95,height=25)
+        
         self.win_main.mainloop()
     
-    
+    def Delete_userInfo(self):
+        CacheManager(self.id).DestoryFile()
+        SubBoxManager().MessageBox("KlasCroller가 수집한\n 이용자님의 정보가 삭제되었습니다.")
+        self.win_main.destroy()
     
     # 첫번째 기능 알림 창 open
     def OpenWindow_Notice_Function1(self):
@@ -191,51 +200,62 @@ class WindowManager():
             self.win_notice_func3.destroy()
             self.win_notice_func3 = -1
             self.is_opend_win_func3 = False
-        # if self.is_opend_win_func4 :
-        #     self.win_notice_func4.destroy()
-        #     self.win_notice_func4 = -1
-        #     self.is_opend_win_func4 = False
+        if self.is_opend_win_func4 :
+            self.win_notice_func4.destroy()
+            self.win_notice_func4 = -1
+            self.is_opend_win_func4 = False
             
         # func1 창이 열림
-        self.is_opend_win_func1 = True
-            
-        # 폰트들 설정
-        font1=tkinter.font.Font(family="휴먼둥근헤드라인", size=20)
+        self.is_opend_win_func1 = True   
         
         # 창 설정
         self.win_notice_func1 = Toplevel(self.win_main)
         self.win_notice_func1.title("한 한기 분석 알림")
         self.win_notice_func1.geometry("400x450")
         self.win_notice_func1.resizable(width = FALSE, height = FALSE)
-        
-        font=tkinter.font.Font(family="맑은 고딕 25", size=10, weight="bold")
-        
-        canvas = Canvas(self.win_notice_func1, width=400, height=450, background='#7C1B0F', highlightthickness = 0)
+
+        # 배경
+        canvas = Canvas(self.win_notice_func1,
+                        width=400,
+                        height=450,
+                        background='#7C1B0F',
+                        highlightthickness = 0)
         canvas.pack(padx=0, pady=0)
         canvas.place(x=0, y=0)
-
         img1 = PhotoImage(file=resource_path("KlasCroller\\img\\back.png"))
-        canvas.create_image(200, 250, image=img1)
+        canvas.create_image(200, 230, image=img1)
+        
+        # 제목 옆에 이미지
+        img2 = PhotoImage(file=resource_path("KlasCroller\\img\\img_analysis_white.png"))
+        Label(self.win_notice_func1, image=img2, background='#7C1B0F').place(x=70, y=95)
         
         
-        label_title = Label(master=self.win_notice_func1)
-        label_title.config(text = "[단일 학기 분석]",font=font1,foreground='white', background='#7C1B0F',justify= CENTER)
-        label_title.place(x=95,y=100)
+        # 창 Title
+        Label(master=self.win_notice_func1,text = "단일 학기 분석",
+            font=self.font1,foreground='white',
+            background='#7C1B0F',
+            justify= CENTER).place(x=130,y=100)
         
-        label_content = Label(master=self.win_notice_func1)
-        label_content.config(text = "아래의 드롭다운 메뉴에서\n\n분석하고 싶은 학기를 선택해주세요.\n\n\n 선택된 학기에 대해 \n\n오각 방사 그래프를 출력해드립니다.",font=font,foreground='white', background='#7C1B0F',justify= CENTER)
-        label_content.place(x=95,y=150)
+        # 설명글
+        Label(master=self.win_notice_func1,
+            text = "아래의 드롭다운 메뉴에서\n\n분석하고 싶은 학기를 선택해주세요.\n\n\n 선택된 학기에 대해 \n\n오각 방사 그래프를 출력해드립니다.",
+            font=self.font2,foreground='white', 
+            background='#7C1B0F',
+            justify= CENTER).place(x=95,y=150)
         
         # 비교 학기 선택창에 콤보박스 생성
         self.combobox_1_1 = ttk.Combobox(self.win_notice_func1)
-        
         self.combobox_1_1.config(value = self.seme_list)
         self.combobox_1_1.current(0)
         self.combobox_1_1.place(x=70,y=300,width=260,height=30)
         
-        button_select_1 = Button(self.win_notice_func1)
-        button_select_1.config(text="분석하기",bg='#7C1B0F',fg='snow',font=font,command = self.OpenWindow_OneSemesterAnalysis)
-        button_select_1.place(x=160,y=350,width=80,height=25)
+        # 분석하기 버튼
+        Button(self.win_notice_func1,
+            text="분석하기",
+            bg='#7C1B0F',
+            fg='snow',
+            font=self.font2,
+            command = self.OpenWindow_OneSemesterAnalysis).place(x=160,y=400,width=80,height=25)
         
         self.win_notice_func1.mainloop()
         
@@ -263,26 +283,24 @@ class WindowManager():
         ax.plot(angles,data_list,linewidth=3,linestyle='solid',color='#FFFF00')
         ax.fill(angles,data_list,'#FFFF00',alpha=0.5) 
         
-        window = Toplevel(self.win_notice_func1)
-        window.config(bg='#7C1B0F')
-        window.title(str(title)+" 학기 분석")
-        window.geometry("650x400")
-        window.resizable(width = FALSE, height = FALSE)
+        self.win_func1 = Toplevel(self.win_notice_func1)
+        self.win_func1.config(bg='#7C1B0F')
+        self.win_func1.title(str(title)+" 학기 분석")
+        self.win_func1.geometry("650x400")
+        self.win_func1.resizable(width = FALSE, height = FALSE)
         
-        parameter_label = [Label(window) for _ in range(5)]
-        value_label = [Label(window) for _ in range(5)]
-        
-        font1=tkinter.font.Font(family="Malgun Gothic", size=22)
-        font2=tkinter.font.Font(family="Malgun Gothic", size=18)
+        parameter_label = [Label(self.win_func1) for _ in range(5)]
+        value_label = [Label(self.win_func1) for _ in range(5)]
+
         
         for i in range(5):
-            parameter_label[i].config(text = self.category[i], font = font1, bg='#69180D', fg = 'yellow')
-            parameter_label[i].place(x=400, y= 20 + 80*i)
+            parameter_label[i].config(text = self.category[i], font = self.font1, bg='#69180D', fg = 'yellow')
+            parameter_label[i].place(x=420, y= 20 + 80*i)
             
-            value_label[i].config(text = self.user_info[title][i], font = font2, bg='#69180D', fg = 'snow')
+            value_label[i].config(text = self.user_info[title][i], font = self.font1, bg='#69180D', fg = 'snow')
             value_label[i].place(x=550, y= 20 + 80*i)
         
-        canvas = FigureCanvasTkAgg(fig, master=window)
+        canvas = FigureCanvasTkAgg(fig, master=self.win_func1)
         canvas.get_tk_widget().pack(anchor='w')
 
 
@@ -310,10 +328,10 @@ class WindowManager():
             self.win_notice_func3.destroy()
             self.win_notice_func3 = -1
             self.is_opend_win_func3 = False
-        # if self.is_opend_win_func4 :
-        #     self.win_notice_func4.destroy()
-        #     self.win_notice_func4 = -1
-        #     self.is_opend_win_func4 = False
+        if self.is_opend_win_func4 :
+            self.win_notice_func4.destroy()
+            self.win_notice_func4 = -1
+            self.is_opend_win_func4 = False
             
         # func2 창이 열림
         self.is_opend_win_func2 = True
@@ -324,35 +342,35 @@ class WindowManager():
         self.win_notice_func2.geometry("400x450")
         self.win_notice_func2.resizable(width = FALSE, height = FALSE)
         
-        # 폰트들 설정
-        font1=tkinter.font.Font(family="휴먼둥근헤드라인", size=20)
-        
-        font=tkinter.font.Font(family="맑은 고딕 25", size=10, weight="bold")
-        
-        canvas = Canvas(self.win_notice_func2, width=400, height=450, background='#7C1B0F', highlightthickness = 0)
+        # 배경
+        canvas = Canvas(self.win_notice_func2,
+                        width=400,
+                        height=450,
+                        background='#7C1B0F',
+                        highlightthickness = 0)
         canvas.pack(padx=0, pady=0)
         canvas.place(x=0, y=0)
-
         img1 = PhotoImage(file=resource_path("KlasCroller\\img\\back.png"))
-        canvas.create_image(200, 250, image=img1)
+        canvas.create_image(200, 230, image=img1)
         
+        # 제목 옆에 이미지
+        img2 = PhotoImage(file=resource_path("KlasCroller\\img\\img_analysis_white.png"))
+        Label(self.win_notice_func2, image=img2, background='#7C1B0F').place(x=70, y=95)
         
-        label_title = Label(master=self.win_notice_func2)
-        label_title.config(text = "[두 개 학기 비교]",font=font1,foreground='white', background='#7C1B0F',justify= CENTER)
-        label_title.place(x=90,y=100)
-        
-        label_content = Label(master=self.win_notice_func2)
-        label_content.config(
-            text = "아래의 드롭다운 메뉴에서\n\n비교하고 싶은 학기를 선택해주세요.\n\n\n 선택된 학기에 대해 \n\n막대 그래프를 출력해드립니다.",
-            font=font,
+        # 창 Title
+        Label(master=self.win_notice_func2,
+            text = "두 개 학기 비교 ",
+            font=self.font1,
             foreground='white',
             background='#7C1B0F',
-            justify= CENTER)
-        label_content.place(x=95,y=150)
-    
-        # 하위 컴포넌트 선언
-        # Button : 1
-        # Combobox : 2
+            justify= CENTER).place(x=130,y=100)
+        
+        # 설명글
+        Label(master=self.win_notice_func2,
+            text = "아래의 드롭다운 메뉴에서\n\n비교하고 싶은 학기를 선택해주세요.\n\n\n 선택된 학기에 대해 \n\n막대 그래프를 출력해드립니다.",
+            font=self.font2,foreground='white', 
+            background='#7C1B0F',
+            justify= CENTER).place(x=95,y=150)
         
         # 비교 학기 선택창에 콤보박스 생성
         self.combobox_2_1 = ttk.Combobox(self.win_notice_func2)
@@ -366,9 +384,13 @@ class WindowManager():
         self.combobox_2_2.current(0)
         self.combobox_2_2.place(x=70,y=350,width=260,height=30)
         
-        button_select_2 = Button(self.win_notice_func2)
-        button_select_2.config(text="비교하기",bg='#7C1B0F',fg='snow',font=font,command = self.OpenWindow_TwoSemesterCompare)
-        button_select_2.place(x=160,y=400,width=80,height=25)
+        # 비교하기 버튼
+        Button(self.win_notice_func2,
+            text="비교하기",
+            bg='#7C1B0F',
+            fg='snow',
+            font=self.font2,
+            command = self.OpenWindow_TwoSemesterCompare).place(x=160,y=400,width=80,height=25)
         
         self.win_notice_func2.mainloop()
         
@@ -391,40 +413,34 @@ class WindowManager():
         
         plt.title(sem1+' vs '+sem2,color='white')
         
-        window_func_2 = Toplevel(self.win_notice_func2)
-        window_func_2.config(bg='#7C1B0F')
-        window_func_2.title(sem1+','+sem2+" 학기 비교")
-        window_func_2.geometry("650x400")
-        window_func_2.resizable(width = FALSE, height = FALSE)
+        self.win_func2 = Toplevel(self.win_notice_func2)
+        self.win_func2.config(bg='#7C1B0F')
+        self.win_func2.title(sem1+','+sem2+" 학기 비교")
+        self.win_func2.geometry("650x400")
+        self.win_func2.resizable(width = FALSE, height = FALSE)
         
         
         
         
-        parameter_label = [Label(window_func_2) for _ in range(5)]
+        parameter_label = [Label(self.win_func2) for _ in range(5)]
         # seme_1_label = [Label(window_func_2) for _ in range(5)]
         # seme_1_label = [Label(window_func_2) for _ in range(5)]
-        value_1_label = [Label(window_func_2) for _ in range(5)]
-        value_2_label = [Label(window_func_2) for _ in range(5)]
-        
-        
-        font1=tkinter.font.Font(family="Malgun Gothic", size=18)
-        font2=tkinter.font.Font(family="Malgun Gothic", size=10)
+        value_1_label = [Label(self.win_func2) for _ in range(5)]
+        value_2_label = [Label(self.win_func2) for _ in range(5)]
         
         for i in range(5):
-            parameter_label[i].config(text = self.category[i], font = font1, bg='snow', fg = 'black')
+            parameter_label[i].config(text = self.category[i], font = self.font1, bg='snow', fg = 'black')
             parameter_label[i].place(x=420, y= 22 + 80*i)
             
             string_1 = sem1+"   "+str(list_1[i])
-            value_1_label[i].config(text = string_1, font = font2, bg='#69180D', fg = 'snow')
-            value_1_label[i].place(x=505, y= 8 + 80*i)
+            value_1_label[i].config(text = string_1, font = self.font2, bg='#69180D', fg = 'snow')
+            value_1_label[i].place(x=505, y= 15 + 80*i)
             
             string_2 = sem2+"   "+ str(list_2[i])
-            value_2_label[i].config(text = string_2, font = font2, bg='#69180D', fg = 'yellow')
+            value_2_label[i].config(text = string_2, font = self.font2, bg='#69180D', fg = 'yellow')
             value_2_label[i].place(x=505, y= 40 + 80*i)
-        canvas = FigureCanvasTkAgg(fig, master=window_func_2)
+        canvas = FigureCanvasTkAgg(fig, master=self.win_func2)
         canvas.get_tk_widget().pack(anchor='w')
-        
-        
         
         
         
@@ -445,51 +461,62 @@ class WindowManager():
             self.win_notice_func3.destroy()
             self.win_notice_func3 = -1
             self.is_opend_win_func3 = False
-        # if self.is_opend_win_func4 :
-        #     self.win_notice_func4.destroy()
-        #     self.win_notice_func4 = -1
-        #     self.is_opend_win_func4 = False
+        if self.is_opend_win_func4 :
+            self.win_notice_func4.destroy()
+            self.win_notice_func4 = -1
+            self.is_opend_win_func4 = False
             
         # func3 창이 열림
         self.is_opend_win_func3 = True
-            
-        # 폰트들 설정
-        font=tkinter.font.Font(family="맑은 고딕 25", size=10, weight="bold")
-        font1=tkinter.font.Font(family="휴먼둥근헤드라인", size=20)
         
         # 창 설정
         self.win_notice_func3 = Toplevel(self.win_main)
-        self.win_notice_func3.title("학업 스타일 분석 알림")
+        self.win_notice_func3.title("학업 스타일 분석")
         self.win_notice_func3.geometry("400x450")
         self.win_notice_func3.resizable(width = FALSE, height = FALSE)
         
-        # 가장 아래 배경
-        canvas = Canvas(self.win_notice_func3, width=400, height=450, background='#7C1B0F', highlightthickness = 0)
+        # 배경
+        canvas = Canvas(self.win_notice_func3,
+                        width=400,
+                        height=450,
+                        background='#7C1B0F',
+                        highlightthickness = 0)
         canvas.pack(padx=0, pady=0)
         canvas.place(x=0, y=0)
-        file_img1 = resource_path("KlasCroller\\img\\back.png")
-        img1 = PhotoImage(file=file_img1)
-        canvas.create_image(200, 250, image=img1)
+        img1 = PhotoImage(file=resource_path("KlasCroller\\img\\back.png"))
+        canvas.create_image(200, 230, image=img1)
+        
+        # 제목 옆에 이미지
+        img2 = PhotoImage(file=resource_path("KlasCroller\\img\\img_mbti_white.png"))
+        Label(self.win_notice_func3, image=img2, background='#7C1B0F').place(x=80, y=85)
+        
+        # 창 Title
+        Label(master=self.win_notice_func3,
+            text = "SF MBTI",
+            font=self.font1,
+            foreground='white',
+            background='#7C1B0F',
+            justify= CENTER).place(x=140,y=100)
 
-        label_title = Label(master=self.win_notice_func3)
-        label_title.config(text = "[SF MBTI]",font=font1,foreground='white', background='#7C1B0F',justify= CENTER)
-        label_title.place(x=110,y=100)
+        # 설명글
+        Label(master=self.win_notice_func3,
+            text = " 지난 학기동안 당신은 어떻게\n\n학업을 수행하셨을까요?\n\n\n당신의 학업 성취 스타일과 맞는\n\n동물 사진을 출력해드립니다.",
+            font=self.font2,
+            foreground='white', 
+            background='#7C1B0F',
+            justify= CENTER).place(x=95,y=150)
         
-        label_content = Label(master=self.win_notice_func3)
-        label_content.config(text = " 지난 학기동안 당신은 어떻게\n\n학업을 수행하셨을까요?\n\n\n당신의 학업 성취 스타일과 맞는\n\n동물 사진을 출력해드립니다.",font=font,foreground='white', background='#7C1B0F',justify= CENTER)
-        label_content.place(x=95,y=150)
-        
-        button_select_1 = Button(self.win_notice_func3, command= self.OpenWindow_PrintUserStyle)
-        button_select_1.config(text="확인하기",bg='#7C1B0F',fg='snow',font=font)
-        button_select_1.place(x=160,y=350,width=80,height=25)
+        # 확인하기 버튼
+        Button(self.win_notice_func3,
+            text="확인하기",
+            bg='#7C1B0F',
+            fg='snow',
+            font=self.font2,
+            command = self.OpenWindow_PrintUserStyle).place(x=150,y=300,width=80,height=25)
         
         self.win_notice_func3.mainloop()
         
-        
     def OpenWindow_PrintUserStyle(self):
-        # 폰트들 설정
-        font=tkinter.font.Font(family="맑은 고딕 25", size=8, weight="bold")
-        font1=tkinter.font.Font(family="휴먼둥근헤드라인", size=20)
         
         window_func_3 = Toplevel(self.win_notice_func3)
         window_func_3.config(bg='#7C1B0F')
@@ -497,32 +524,34 @@ class WindowManager():
         window_func_3.geometry("650x400")
         window_func_3.resizable(width = FALSE, height = FALSE)
         
-        Label(window_func_3,text="학업 스타일 분석",font=font1,bg='#7C1B0F',fg='snow').place(x=230,y=10)
+        Label(window_func_3,text="학업 스타일 분석",font=self.font1,bg='#7C1B0F',fg='snow').place(x=220,y=10)
         
-        canvas_card1 = Canvas(window_func_3, width=246, height=320,background='#7C1B0F', highlightthickness = 0)
+        img1 = PhotoImage(file=resource_path("KlasCroller\\img\\img_board.png"))
+        
+        canvas_card1 = Canvas(window_func_3, width=246, height=328,background='#7C1B0F', highlightthickness = 0)
         canvas_card1.place(x=50, y=65)
-        img1 = PhotoImage(file=resource_path("KlasCroller\\img\\Card1.png"))
-        canvas_card1.create_image(123, 160, image=img1)
+        canvas_card1.create_image(123, 164, image=img1)
         
-        canvas_card2 = Canvas(window_func_3, width=246, height=320,background='#7C1B0F', highlightthickness = 0)
+        canvas_card2 = Canvas(window_func_3, width=246, height=328,background='#7C1B0F', highlightthickness = 0)
         canvas_card2.place(x=365, y=65)
-        img2 = PhotoImage(file=resource_path("KlasCroller\\img\\Card2.png"))
-        canvas_card2.create_image(123, 160, image=img2)
+        canvas_card2.create_image(123, 164, image=img1)
         
         canvas_pos_animal = Canvas(window_func_3, width=185, height=185 ,background='black', highlightthickness = 0)
-        canvas_pos_animal.place(x=81, y=90)
+        canvas_pos_animal.place(x=80, y=185)
         background_img_1 =  PhotoImage(file=resource_path("KlasCroller\\img\\square.png"))
         foreground_img_1 =  PhotoImage(file=resource_path("KlasCroller\\img\\circle.png"))
         canvas_pos_animal.create_image(185//2,185//2,image=background_img_1)
         canvas_pos_animal.create_image(185//2,185//2,image=foreground_img_1)
         
         canvas_neg_animal = Canvas(window_func_3, width=185, height=185 ,background='black', highlightthickness = 0)
-        canvas_neg_animal.place(x=396, y=90)
+        canvas_neg_animal.place(x=396, y=185)
         background_img_2 =  PhotoImage(file=resource_path("KlasCroller\\img\\square.png"))
         foreground_img_2 =  PhotoImage(file=resource_path("KlasCroller\\img\\circle.png"))
         canvas_neg_animal.create_image(185//2,185//2,image=background_img_2)
         canvas_neg_animal.create_image(185//2,185//2,image=foreground_img_2)
         
+        
+        # 사용자 style 뽑아내는 로직
         good_adjective_list = ['열정많은','저명한','끈질긴','부지런한','운 좋은']
         good_noun_list = ['소나무','돌고래','쥐','개미','네잎클로버']
 
@@ -530,7 +559,7 @@ class WindowManager():
         bad_noun_list = ['베짱이','금붕어','게복치','나무늘보','까마귀']
         
         list_a =[]  # 의지력 list
-        list_b =[]  # 지능 list
+        list_b =[]  # 사고력 list
         list_c =[]  # 생존력 list
         list_d =[]  # 근명성 list
         list_e =[]  # 가성비 list
@@ -575,16 +604,109 @@ class WindowManager():
         str_good = good_adjective_list[second_best] +' '+ good_noun_list[best]
         str_bad = bad_adjective_list[second_worst] +' '+ bad_noun_list[worst]
         
-        Label(window_func_3,text=str_good,font=font,bg='#E8A612',fg='black').place(x=80,y=286)
-        Label(window_func_3,text="- "+self.category[best] + " 이/가 제일 훌륭합니다.",font=font,bg='#E8A612',fg='black').place(x=80,y=320)
-        Label(window_func_3,text="- "+self.category[second_best] + " 이/가 뛰어납니다.",font=font,bg='#E8A612',fg='black').place(x=80,y=350)
+        Label(window_func_3,text=str_good,font=self.font2,bg='white',fg='black').place(x=80,y=125)
+        Label(window_func_3,text="- "+self.category[best] + " 이/가 제일 훌륭합니다.",font=self.font2,bg='white',fg='black').place(x=80,y=145)
+        Label(window_func_3,text="- "+self.category[second_best] + " 이/가 뛰어납니다.",font=self.font2,bg='white',fg='black').place(x=80,y=165)
         
-        Label(window_func_3,text=str_bad ,font=font,bg='#7C35B1',fg='snow').place(x=395,y=286)
-        Label(window_func_3,text="- "+self.category[worst] + " 이/가 제일 필요합니다.",font=font,bg='#7C35B1',fg='snow').place(x=395,y=320)
-        Label(window_func_3,text="- "+self.category[second_worst] + " 이/가 부족합니다.",font=font,bg='#7C35B1',fg='snow').place(x=395,y=350)
+        Label(window_func_3,text=str_bad ,font=self.font2,bg='white',fg='black').place(x=395,y=125)
+        Label(window_func_3,text="- "+self.category[worst] + " 이/가 제일 필요합니다.",font=self.font2,bg='white',fg='black').place(x=395,y=145)
+        Label(window_func_3,text="- "+self.category[second_worst] + " 이/가 부족합니다.",font=self.font2,bg='white',fg='black').place(x=395,y=165)
         
         
         window_func_3.mainloop()
+        
+        
+        
+        
+        
+        
+        
+        
+# 네번째 기능 알림 창 open
+    def OpenWindow_Notice_Function4(self):
+        # main 창 제외하고 열린 창은 모두 닫기
+        if self.is_opend_win_func1 :
+            self.win_notice_func1.destroy()
+            self.win_notice_func1 = -1
+            self.is_opend_win_func1 = False
+        if self.is_opend_win_func2 :
+            self.win_notice_func2.destroy()
+            self.win_notice_func2 = -1
+            self.is_opend_win_func2 = False
+        if self.is_opend_win_func3 :
+            self.win_notice_func3.destroy()
+            self.win_notice_func3 = -1
+            self.is_opend_win_func3 = False
+        if self.is_opend_win_func4 :
+            self.win_notice_func4.destroy()
+            self.win_notice_func4 = -1
+            self.is_opend_win_func4 = False
+            
+        # func3 창이 열림
+        self.is_opend_win_func4 = True
+        
+        # 창 설정
+        self.win_notice_func4 = Toplevel(self.win_main)
+        self.win_notice_func4.title("학업 스타일 분석")
+        self.win_notice_func4.geometry("400x450")
+        self.win_notice_func4.resizable(width = FALSE, height = FALSE)
+        
+        # 배경
+        canvas = Canvas(self.win_notice_func4,
+                        width=400,
+                        height=450,
+                        background='#7C1B0F',
+                        highlightthickness = 0)
+        canvas.pack(padx=0, pady=0)
+        canvas.place(x=0, y=0)
+        img1 = PhotoImage(file=resource_path("KlasCroller\\img\\back.png"))
+        canvas.create_image(200, 230, image=img1)
+        
+        # 제목 옆에 이미지
+        img2 = PhotoImage(file=resource_path("KlasCroller\\img\\img_search_white.png"))
+        Label(self.win_notice_func4, image=img2, background='#7C1B0F').place(x=80, y=85)
+        
+        # 창 Title
+        Label(master=self.win_notice_func4,
+            text = "취업 공고 분야",
+            font=self.font1,
+            foreground='white',
+            background='#7C1B0F',
+            justify= CENTER).place(x=140,y=100)
+
+        # 설명글
+        Label(master=self.win_notice_func4,
+            text = "\n\n입력하신 분야/직업\n\n잡코리아 취업공고가 출력됩니다.",
+            font=self.font2,
+            foreground='white', 
+            background='#7C1B0F',
+            justify= CENTER).place(x=95,y=150)
+        
+        # 입력창
+        self.entry_search = Entry(master=self.win_notice_func4, relief = "groove")
+        self.entry_search.insert(0,"예: 웹 개발, 앱 개발 ..")
+        def clear(event):
+            # 좌클릭 했을 때 입력차의 내용 다 지우기
+            if self.entry_search.get() == "예: 웹 개발, 앱 개발 ..":
+                self.entry_search.delete(0,len(self.entry_search.get()))
+        self.entry_search.bind("<Button-1>",clear)
+        self.entry_search.place(x=85,y=300,width=210,height=40)
+        
+        # 검색하기 버튼
+        Button(self.win_notice_func4,
+            text="검색하기",
+            bg='#7C1B0F',
+            fg='snow',
+            font=self.font2,
+            command = self.OpenWebsite).place(x=150,y=360,width=80,height=25)
+        
+        self.win_notice_func4.mainloop()
+        
+    def OpenWebsite(self):
+        keyword = self.entry_search.get()
+        url = 'https://www.jobkorea.co.kr/Search/?stext={}&tabType=recruit&Page_No=1'.format(keyword)
+        webbrowser.open(url)
+        
         
 class SubBoxManager():
     def __init__(self):

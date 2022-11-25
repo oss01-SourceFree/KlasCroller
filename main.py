@@ -115,7 +115,7 @@ if __name__ == "__main__":
     
     
     display_main = WindowManager(user_info,id)
-    display_main.OpenWindow_MainMenu()
+    display_main.Run_Main()
     
     
 

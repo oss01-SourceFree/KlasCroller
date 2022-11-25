@@ -106,7 +106,15 @@ class WindowManager():
         self.can_2.destroy()
         
         self.win_lo.destroy()
-        
+    
+    def Run_Main(self):
+        self.OpenWindow_MainMenu()
+        # 유저 정보가 담긴 파일 위치
+        path_user_file = resource_path("KlasCroller\\usr")
+        CacheManager(path_user_file, self.id).DestoryFile()
+        SubBoxManager().MessageBox("KlasCroller가 수집한\n 이용자님의 정보가 삭제되었습니다.")
+        return
+    
     # 메인메뉴 창 열기
     def OpenWindow_MainMenu(self):
         # 하나의 기능 창만 열릴 수 있도록
@@ -168,7 +176,6 @@ class WindowManager():
         b3.place(x=0,y=390,width=250, height=170)
         b4.place(x=250,y=390,width=250, height=170);
         
-        
         # 캐시파일 삭제
         Button(self.win_main,
             text="계정 초기화",
@@ -181,8 +188,9 @@ class WindowManager():
         self.win_main.mainloop()
     
     def Delete_userInfo(self):
-        CacheManager(self.id).DestoryFile()
-        SubBoxManager().MessageBox("KlasCroller가 수집한\n 이용자님의 정보가 삭제되었습니다.")
+        print(self.id)
+        # CacheManager(self.id).DestoryFile()
+        # SubBoxManager().MessageBox("KlasCroller가 수집한\n 이용자님의 정보가 삭제되었습니다.")
         self.win_main.destroy()
     
     # 첫번째 기능 알림 창 open

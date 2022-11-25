@@ -12,7 +12,6 @@ from math import pi
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-from matplotlib import pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 matplotlib.rcParams['font.family']='NanumGothic'
 matplotlib.rcParams['axes.unicode_minus'] = False
@@ -54,7 +53,7 @@ class WindowManager():
         # 창 설정
         self.win_lo = Tk()
         self.win_lo.title("Klas Log-in")
-        self.win_lo.geometry("400x500")
+        self.win_lo.geometry("400x500-100+50")
         
         self.win_lo.protocol("WM_DELETE_WINDOW", self.CloseWindow_Login)
         
@@ -150,7 +149,7 @@ class WindowManager():
         # 창 설정
         self.win_main = Tk()
         self.win_main.title("Main Menu")
-        self.win_main.geometry("500x560") # 가로 세로
+        self.win_main.geometry("500x560-100+50") # 가로 세로
         self.win_main.resizable(True, True)
         
         self.win_main.protocol("WM_DELETE_WINDOW", self.CloseWindow_MainMenu)
@@ -242,21 +241,18 @@ class WindowManager():
         # 하위 창 초기화
         if self.win_func1 != -1:
             self.win_func1.destroy()
-            self.user_info=self.user_copy
             self.win_func1 = -1
         if self.win_func2 != -1:
             self.win_func2.destroy()
-            self.user_info=self.user_copy
             self.win_func2 = -1
         if self.win_func3 != -1:
             self.win_func3.destroy()
-            self.user_info=self.user_copy
             self.win_func3 = -1
         
         # 창 설정
         self.win_notice_func1 = Toplevel(self.win_main)
         self.win_notice_func1.title("한 한기 분석 알림")
-        self.win_notice_func1.geometry("400x450")
+        self.win_notice_func1.geometry("400x450+100+50")
         self.win_notice_func1.resizable(width = FALSE, height = FALSE)
 
         # 배경
@@ -309,7 +305,7 @@ class WindowManager():
     def OpenWindow_OneSemesterAnalysis(self):
         self.sem = self.combobox_1_1.get()
         
-        self.data_list = self.user_info[self.sem]
+        self.data_list = self.user_info[self.sem].copy()
         self.data_list += self.data_list[:1]
         
         angles = [n/float(5) * 2 *pi for n in range(5)]
@@ -334,7 +330,7 @@ class WindowManager():
         self.win_func1 = Toplevel(self.win_notice_func1)
         self.win_func1.config(bg='#7C1B0F')
         self.win_func1.title(self.sem+" 학기 분석")
-        self.win_func1.geometry("650x400")
+        self.win_func1.geometry("650x400+150+100")
         self.win_func1.resizable(width = FALSE, height = FALSE)
         
         parameter_label = [Label(self.win_func1) for _ in range(5)]
@@ -387,21 +383,18 @@ class WindowManager():
         # 하위 창 초기화
         if self.win_func1 != -1:
             self.win_func1.destroy()
-            self.user_info=self.user_copy
             self.win_func1 = -1
         if self.win_func2 != -1:
             self.win_func2.destroy()
-            self.user_info=self.user_copy
             self.win_func2 = -1
         if self.win_func3 != -1:
             self.win_func3.destroy()
-            self.user_info=self.user_copy
             self.win_func3 = -1
         
         # 창 설정
         self.win_notice_func2 = Toplevel(self.win_main)
         self.win_notice_func2.title("두 학기 비교 알림")
-        self.win_notice_func2.geometry("400x450")
+        self.win_notice_func2.geometry("400x450+100+50")
         self.win_notice_func2.resizable(width = FALSE, height = FALSE)
         
         # 배경
@@ -459,8 +452,8 @@ class WindowManager():
     def OpenWindow_TwoSemesterCompare(self):
         self.sem1 = self.combobox_2_1.get()
         self.sem2 = self.combobox_2_2.get()
-        self.list_1 = self.user_info[self.sem1]
-        self.list_2 = self.user_info[self.sem2]
+        self.list_1 = self.user_info[self.sem1].copy()
+        self.list_2 = self.user_info[self.sem2].copy()
         
         x = np.arange(len(self.category))
         width = 0.3
@@ -478,7 +471,7 @@ class WindowManager():
         self.win_func2 = Toplevel(self.win_notice_func2)
         self.win_func2.config(bg='#7C1B0F')
         self.win_func2.title(self.sem1+','+self.sem2+" 학기 비교")
-        self.win_func2.geometry("650x400")
+        self.win_func2.geometry("650x400+150+100")
         self.win_func2.resizable(width = FALSE, height = FALSE)
         
         
@@ -534,21 +527,18 @@ class WindowManager():
         # 하위 창 초기화
         if self.win_func1 != -1:
             self.win_func1.destroy()
-            self.user_info=self.user_copy
             self.win_func1 = -1
         if self.win_func2 != -1:
             self.win_func2.destroy()
-            self.user_info=self.user_copy
             self.win_func2 = -1
         if self.win_func3 != -1:
             self.win_func3.destroy()
-            self.user_info=self.user_copy
             self.win_func3 = -1
         
         # 창 설정
         self.win_notice_func3 = Toplevel(self.win_main)
         self.win_notice_func3.title("학업 스타일 분석")
-        self.win_notice_func3.geometry("400x450")
+        self.win_notice_func3.geometry("400x450+100+50")
         self.win_notice_func3.resizable(width = FALSE, height = FALSE)
         
         # 배경
@@ -597,7 +587,7 @@ class WindowManager():
         self.win_func3 = Toplevel(self.win_notice_func3)
         self.win_func3.config(bg='#7C1B0F')
         self.win_func3.title('SF MBTI')
-        self.win_func3.geometry("650x400")
+        self.win_func3.geometry("650x400+150+100")
         self.win_func3.resizable(width = FALSE, height = FALSE)
         
         Label(self.win_func3,text="학업 스타일 분석",font=self.font1,bg='#7C1B0F',fg='snow').place(x=220,y=10)
@@ -748,7 +738,7 @@ class WindowManager():
         # 창 설정
         self.win_notice_func4 = Toplevel(self.win_main)
         self.win_notice_func4.title("학업 스타일 분석")
-        self.win_notice_func4.geometry("400x450")
+        self.win_notice_func4.geometry("400x450+100+50")
         self.win_notice_func4.resizable(width = FALSE, height = FALSE)
         
         # 배경

@@ -109,14 +109,14 @@ if __name__ == "__main__":
     
     
     
-    # # 테스트 할 때 41~ 이 위에까지 주석, 이 아래로 주석해제
-    # # 테스트 로그인은 2017203088 id 만 치면 됨    
-    # cache = CacheManager(path_user_file,id)   
-    # user_info = cache.GetCache()
+    # 테스트 할 때 41~ 이 위에까지 주석, 이 아래로 주석해제
+    # 테스트 로그인은 2017203088 id 만 치면 됨    
+    cache = CacheManager(path_user_file,id)   
+    user_info = cache.GetCache()
     
     
-    # display_main = WindowManager(user_info,id)
-    # display_main.Run_Main()
+    display_main = WindowManager(user_info,id)
+    display_main.Run_Main()
     
 
 

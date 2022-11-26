@@ -219,7 +219,7 @@ _++사용자의 단점이 부각된 형용어 : ['노력상실', '우둔한', '�
 완료된 학기들을 종합적으로 평가하여 사용자의 학업 스타일과 어울리는 동물(+ 배경) 이미지가 출력됩니다.
 <div align="center", float= "left">
 <img width="25%" src="https://user-images.githubusercontent.com/50646145/204079459-e513121e-6cd7-4121-88ff-efe078f6a635.png"/>
-<img width="45%" src="https://user-images.githubusercontent.com/50646145/204084016-8e699167-0bec-45a9-98b1-98be9f0d010c.png"/>
+<img width="45%" src="https://user-images.githubusercontent.com/50646145/204085394-f99a2d59-dc07-4e68-9772-4275438acd8e.png"/>
 </div>
 
 - <취업 공고 분야> 버튼을 클릭한다면, 해당 기능에 대한 설명을 보실 수 있습니다.

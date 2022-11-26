@@ -34,7 +34,7 @@ class WindowManager():
         self.id = id
         self.pw = ''
         
-        self.category = ['의지력', '사고력' , '생존력' , '근명성' , '가성비']
+        self.category = ['의지력', '사고력' , '생존력' , '근면성' , '가성비']
         # 유저 정보 ( 의지력 , 사고력 , 생존력 , 근명성 , 가성비)
         self.user_info = user_info
         self.user_copy = user_info

@@ -67,7 +67,6 @@ class Scraper:
             
             html = self.browser.page_source
             soup = BeautifulSoup(html, 'lxml') #html.parser
-            
             semesters = soup.find("select",{"class":"form-control form-control-sm"}).findAll("option")
             
             # res: 최종결과(dictionary) 
@@ -92,7 +91,6 @@ class Scraper:
             # print("성적정보",grade_information)
             
             seme_name = list(res.keys())
-            
             for i in range(self.num_semester):
                 # res[seme_name[i]] += grade_information[i]
                 
@@ -189,7 +187,6 @@ class Scraper:
                 
         return res
     
-    
     # 학기별 학업 참여도를 추출할 때, 학기 인덱스를 입력받아 해당 학기 페이지로 이동
     def ChangeSemester(self, semester_idx):
         try:
@@ -206,7 +203,6 @@ class Scraper:
         except:
             return 0
         
-    
     # 특정 한 학기의 특정 한 과목의 학업 참여도를 종합하여 반환한다. (팀플, 과제, 퀴즈, 출석율)
     # 가장 최근 학기부터 첫 학기 순으로 반환한다.
     def GetEachSubjectsData(self, xpath):
@@ -250,8 +246,6 @@ class Scraper:
         res.append(late)
         
         return res
-    
-    
     
     # 성적정보를 가져온다.
     # 가장 최근 학기부터 첫 학기 순으로 반환한다.

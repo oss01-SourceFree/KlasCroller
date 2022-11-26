@@ -201,34 +201,34 @@ _++사용자의 단점이 부각된 형용어 : ['노력상실', '우둔한', '�
 <img width="25%" src="https://user-images.githubusercontent.com/50646145/204078977-4bd7db65-ee4b-4314-bdb3-486804e2ea3d.png"/>
 </div>
 
-- <단일 학기 분석> 버튼을 클릭한다면, 해당 기능에 대한 설명과 학기 선택 콤보 박스가 있는 학기선택 창을 보실 수 있습니다. 
+- {단일 학기 분석} 버튼을 클릭한다면, 해당 기능에 대한 설명과 학기 선택 콤보 박스가 있는 학기선택 창을 보실 수 있습니다. 
 선택된 학기에 대해서 사용자의 파라미터 값으로 오각형의 방사그래프(Radiation Graph Of A Pentagon)가 출력됩니다.
 <div align="center", float= "left", margin="auto">
 <img width="25%" src="https://user-images.githubusercontent.com/50646145/204079180-4e49c686-0980-4ed6-8c83-8022249ee4cd.png"/>
 <img width="45%" src="https://user-images.githubusercontent.com/50646145/204079185-89af32c4-8066-4ac6-9af9-a99c37e15e24.png"/>
 </div>
 
-- <두개 학기 비교> 버튼을 클릭한다면, 해당 기능에 대한 설명과 학기 선택 콤보 박스가 있는 학기선택 창을 보실 수 있습니다. 
+- {두개 학기 비교} 버튼을 클릭한다면, 해당 기능에 대한 설명과 학기 선택 콤보 박스가 있는 학기선택 창을 보실 수 있습니다. 
 선택된 두개 학기에 대해서 사용자의 파라미터 값으로 막대 그래프(Bar Graph)가 출력됩니다.
 <div align="center", float= "left">
 <img width="25%" src="https://user-images.githubusercontent.com/50646145/204079474-68a59dae-9145-4a48-aaad-bbfbd81db6ee.png"/>
 <img width="45%" src="https://user-images.githubusercontent.com/50646145/204079483-915d0f45-4bc7-4d8e-95bf-44b3d65bbc41.png"/>
 </div>
 
-- <SF MBTI> 버튼을 클릭한다면, 해당 기능에 대한 설명을 보실 수 있습니다.
+- {SF MBTI} 버튼을 클릭한다면, 해당 기능에 대한 설명을 보실 수 있습니다.
 완료된 학기들을 종합적으로 평가하여 사용자의 학업 스타일과 어울리는 동물(+ 배경) 이미지가 출력됩니다.
 <div align="center", float= "left">
 <img width="25%" src="https://user-images.githubusercontent.com/50646145/204079459-e513121e-6cd7-4121-88ff-efe078f6a635.png"/>
 <img width="45%" src="https://user-images.githubusercontent.com/50646145/204085394-f99a2d59-dc07-4e68-9772-4275438acd8e.png"/>
 </div>
 
-- <취업 공고 분야> 버튼을 클릭한다면, 해당 기능에 대한 설명을 보실 수 있습니다.
+- {취업 공고 분야} 버튼을 클릭한다면, 해당 기능에 대한 설명을 보실 수 있습니다.
 관심 있는 진로, 취업 분야의 키워드를 입력한 뒤 검색버튼을 누르면 '잡코리아'(웹사이트) 에서 해당 키워드에 대한 공고문을 바로 보실 수 있습니다.
 <div align="center", float= "left">
 <img width="25%" src="https://user-images.githubusercontent.com/50646145/204079436-ded25ba1-1e31-459a-b6b4-c4434d1ada2e.png"/>
 </div>
 
-- 새 학기를 업데이트 하려거나, KLAS 정보를 local PC에 저장하고 싶지 않을 경우, <내 정보 초기화> 버튼을 클릭 해주세요.
+- 새 학기를 업데이트 하려거나, KLAS 정보를 local PC에 저장하고 싶지 않을 경우, {내 정보 초기화} 버튼을 클릭 해주세요.
 cache file 이 삭제되고, 프로그램이 종료 됩니다.
 <div align="center", float= "left">
 <img width="30%" src="https://user-images.githubusercontent.com/50646145/204079404-0fc7096a-2954-4301-a777-bb74b63d0fc0.png"/>

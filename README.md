@@ -19,7 +19,7 @@
 
 
 # 프로젝트 설명
-_(* 광운대학교 2022년 2학기 <오픈소스소프트웨어개발> 교과목의 14조 팀프로젝트 결과물입니다. )_
+_* 광운대학교 2022년 2학기 <오픈소스소프트웨어개발> 교과목의 14조 팀프로젝트 결과물입니다._
 
  - 제안서: [[14조]프로젝트_제안서.pdf](https://github.com/oss01-SourceFree/KlasCroller/files/10095838/14._.pdf)
  - 중간보고서: [[14조]중간보고서.pdf](https://github.com/oss01-SourceFree/KlasCroller/files/10095834/14.pdf)

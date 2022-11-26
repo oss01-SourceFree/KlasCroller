@@ -21,9 +21,10 @@
 # 프로젝트 설명
 _(* 광운대학교 2022년 2학기 <오픈소스소프트웨어개발> 교과목의 14조 팀프로젝트 결과물입니다. )_
 
- - 프로젝트 제안서: [[14조]프로젝트_제안서.pdf](https://github.com/oss01-SourceFree/KlasCroller/files/10095838/14._.pdf)
- - 프로젝트 중간보고서: [[14조]중간보고서.pdf](https://github.com/oss01-SourceFree/KlasCroller/files/10095834/14.pdf)
- - 프로젝트 최종보고서:
+ - 제안서: [[14조]프로젝트_제안서.pdf](https://github.com/oss01-SourceFree/KlasCroller/files/10095838/14._.pdf)
+ - 중간보고서: [[14조]중간보고서.pdf](https://github.com/oss01-SourceFree/KlasCroller/files/10095834/14.pdf)
+ - 최종보고서: [[14조]최종_보고서.pdf](https://github.com/oss01-SourceFree/KlasCroller/files/10096442/14._.pdf)
+
 
 광운대학교 학부생들이 학업 성취도에 대한 진단을 스스로 할 수 있도록 Window 기반 GUI 프로그램을 만들었습니다.
 

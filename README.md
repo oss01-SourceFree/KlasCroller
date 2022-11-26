@@ -19,7 +19,7 @@
 
 
 # 프로젝트 설명
-(* 광운대학교 2022년 2학기 <오픈소스소프트웨어개발> 교과목의 14조 팀프로젝트 결과물입니다. )
+_(* 광운대학교 2022년 2학기 <오픈소스소프트웨어개발> 교과목의 14조 팀프로젝트 결과물입니다. )_
 
  - 프로젝트 제안서: [[14조]프로젝트_제안서.pdf](https://github.com/oss01-SourceFree/KlasCroller/files/10095838/14._.pdf)
  - 프로젝트 중간보고서: [[14조]중간보고서.pdf](https://github.com/oss01-SourceFree/KlasCroller/files/10095834/14.pdf)
@@ -38,6 +38,11 @@ KLAS(광운대학교 웹 어플리케이션) 로그인 시 사용하는 id,pw를
 ## [대상]
 - klas에 교과목 수강기록과 성적 정보가 입력되어있는 광운대학교 재학생
 - (수강 기록에 e-learing 과목이 포함되어 있을 시, 프로그램이 정상 동작되지 않습니다.)
+
+## [Flow Chart]
+<div align="center">
+<img width="50%" src="https://user-images.githubusercontent.com/50646145/204091100-cd543fdd-29df-4e91-9c72-47445dc2e48f.png"/>
+</div>
 
 ## [기능]
 - KLAS (광운대학교 웹어플리케이션, https://klas.kw.ac.kr) 로그인을 통하여 사용자가 입력한 id,pw 유효성 검사

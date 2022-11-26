@@ -672,14 +672,14 @@ class WindowManager():
         
         canvas_pos_animal = Canvas(self.win_func3, width=185, height=185 ,background='white', highlightthickness = 0)
         canvas_pos_animal.place(x=80, y=185)
-        background_img_1 =  PhotoImage(file=resource_path(good_back_imgs[best]))
+        background_img_1 =  PhotoImage(file=resource_path(good_back_imgs[second_best]))
         foreground_img_1 =  PhotoImage(file=resource_path(good_ani_imgs[best]))
         canvas_pos_animal.create_image(185//2,185//2,image=background_img_1)
         canvas_pos_animal.create_image(185//2,185//2,image=foreground_img_1)
         
         canvas_neg_animal = Canvas(self.win_func3, width=185, height=185 ,background='white', highlightthickness = 0)
         canvas_neg_animal.place(x=396, y=185)
-        background_img_2 =  PhotoImage(file=resource_path(bad_back_imgs[worst]))
+        background_img_2 =  PhotoImage(file=resource_path(bad_back_imgs[second_worst]))
         foreground_img_2 =  PhotoImage(file=resource_path(bad_ani_imgs[worst]))
         canvas_neg_animal.create_image(185//2,185//2,image=background_img_2)
         canvas_neg_animal.create_image(185//2,185//2,image=foreground_img_2)

@@ -25,7 +25,7 @@
 
 KLAS(광운대학교 웹 어플리케이션) 로그인 시 사용하는 id,pw를 입력받아, 학부생의 학업 성취 데이터를 추출하여 파라미터를 구성합니다.
 
-사용자의 요청에 따라 파라미터를 기준으로  기능을 수행 합니다.
+사용자의 요청에 따라 파라미터를 기준으로 다양한 기능을 수행 합니다.
 
  - 프로젝트 제안서: [[14조]프로젝트_제안서.pdf](https://github.com/oss01-SourceFree/KlasCroller/files/10095838/14._.pdf)
  - 프로젝트 중간보고서: [[14조]중간보고서.pdf](https://github.com/oss01-SourceFree/KlasCroller/files/10095834/14.pdf)

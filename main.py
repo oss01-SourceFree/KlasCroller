@@ -103,7 +103,3 @@ if __name__ == "__main__":
     user_info = cache.GetCache()
     display_main = WindowManager(user_info,id)
     display_main.Run_Main()
-
-
-
-

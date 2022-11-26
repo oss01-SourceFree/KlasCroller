@@ -347,16 +347,6 @@ class WindowManager():
         canvas = FigureCanvasTkAgg(fig, master=self.win_func1)
         canvas.get_tk_widget().pack(anchor='w')
 
-
-
-
-
-
-
-
-
-
-
     # 두번째 기능 알림 창 open
     def OpenWindow_Notice_Function2(self):
         # main 창 제외하고 열린 창은 모두 닫기
@@ -598,7 +588,7 @@ class WindowManager():
         good_adjective_list = ['열정많은','저명한','끈질긴','부지런한','운 좋은']
         good_noun_list = ['소나무','돌고래','쥐','개미','네잎클로버']
 
-        bad_adjective_list = ['노력상실','우둔한','포기 빠른','게으른','불운한']
+        bad_adjective_list = ['노력상실','우둔한','포기빠른','게으른','불운한']
         bad_noun_list = ['베짱이','금붕어','게복치','나무늘보','까마귀']
         
         good_back_imgs = ['KlasCroller\\img\\back_p_1.png',
@@ -626,7 +616,7 @@ class WindowManager():
         list_a =[]  # 의지력 list
         list_b =[]  # 사고력 list
         list_c =[]  # 생존력 list
-        list_d =[]  # 근명성 list
+        list_d =[]  # 근면성 list
         list_e =[]  # 가성비 list
 
 

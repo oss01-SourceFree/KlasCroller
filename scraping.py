@@ -48,21 +48,16 @@ class Scraper:
             # 3. 로그인 버튼 클릭
             self.browser.find_element(By.XPATH,"/html/body/div[1]/div/div/div[2]/form/div[2]/button").click()
             
-            try:
-                WebDriverWait(self.browser,3).until(EC.presence_of_all_elements_located((By.CLASS_NAME,'ax-dialog-header')))
+            if self.WaitPageChange('ax-dialog-header'):
                 return -2
-            except:
-                print()
+            return 1
         except:
             return -1
         
     # Klas에서 사용자의 Data를 가져와 가공한다.
     def ProcessingUserData(self):
         try:
-            try:
-                WebDriverWait(self.browser,8).until(EC.presence_of_all_elements_located((By.CLASS_NAME,'scheduletitle')))
-                time.sleep(self.sleeping_time)
-            except:
+            if not self.WaitPageChange('scheduletitle'):
                 return 0
             
             html = self.browser.page_source

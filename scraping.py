@@ -17,18 +17,19 @@ from bs4 import BeautifulSoup
 
 
 class Scraper:
-    def __init__(self):
+    def __init__(self,headless = False):
         self.url = "https://klas.kw.ac.kr/"
         '''
         창을 띄우지 않으려면 아래 # options.add_argument('headless') 코드의 주석을 해제하면 됩니다.
         '''
         options = webdriver.ChromeOptions()
-        options.add_argument('headless')
+        if headless:
+            options.add_argument('headless')
         self.browser = webdriver.Chrome(ChromeDriverManager().install(),options=options)
         
         # 화면 전환시 데이터가 바로 로드되지 않아 scraping 되지 않는 문제를 막기위해
         # scaping 대상 페이지에 도착시 sleep() 사용, 아래 변수는 sleep()에 전달할 인자
-        self.sleeping_time = 1
+        self.sleeping_time = 0.8
         
         # self.num_semester: (진행 + 완료) 학기 갯수
         self.num_semester = 0
@@ -47,21 +48,25 @@ class Scraper:
             # 3. 로그인 버튼 클릭
             self.browser.find_element(By.XPATH,"/html/body/div[1]/div/div/div[2]/form/div[2]/button").click()
             
-            # 만약 로그인 불가 알림창이 나온다면 -1을 반환한다.
-            if(self.WaitPageChange("ax-dialog-header",3)):
+            try:
+                WebDriverWait(self.browser,3).until(EC.presence_of_all_elements_located((By.CLASS_NAME,'ax-dialog-header')))
                 return -2
+            except:
+                print()
         except:
             return -1
         
     # Klas에서 사용자의 Data를 가져와 가공한다.
     def ProcessingUserData(self):
         try:
-            if(not self.WaitPageChange("scheduletitle")):
+            try:
+                WebDriverWait(self.browser,8).until(EC.presence_of_all_elements_located((By.CLASS_NAME,'scheduletitle')))
+                time.sleep(self.sleeping_time)
+            except:
                 return 0
             
             html = self.browser.page_source
             soup = BeautifulSoup(html, 'lxml') #html.parser
-            
             semesters = soup.find("select",{"class":"form-control form-control-sm"}).findAll("option")
             
             # res: 최종결과(dictionary) 
@@ -86,7 +91,6 @@ class Scraper:
             # print("성적정보",grade_information)
             
             seme_name = list(res.keys())
-            
             for i in range(self.num_semester):
                 # res[seme_name[i]] += grade_information[i]
                 
@@ -166,7 +170,10 @@ class Scraper:
         subjects = soup.find("ul",{"class":"subjectlist listbox"}).findAll("li")
         
         for i in range(1,len(subjects)+1):
-            if(not self.WaitPageChange("scheduletitle")):
+            try:
+                WebDriverWait(self.browser,8).until(EC.presence_of_all_elements_located((By.CLASS_NAME,'scheduletitle')))
+                time.sleep(self.sleeping_time)
+            except:
                 return 0
             self.ChangeSemester(semester_idx)
             xpath = "/html/body/main/div/div/div/div/div[1]/div[2]/ul/li["+str(i)+"]"
@@ -180,28 +187,37 @@ class Scraper:
                 
         return res
     
-    
     # 학기별 학업 참여도를 추출할 때, 학기 인덱스를 입력받아 해당 학기 페이지로 이동
     def ChangeSemester(self, semester_idx):
-        if(not self.WaitPageChange("scheduletitle")):
+        try:
+            WebDriverWait(self.browser,8).until(EC.presence_of_all_elements_located((By.CLASS_NAME,'scheduletitle')))
+            time.sleep(self.sleeping_time)
+        except:
             return 0
         element_dropdown = self.browser.find_element(By.CLASS_NAME,"form-control.form-control-sm")
         select_semster = Select(element_dropdown)
         select_semster.select_by_index(semester_idx)
-        if(not self.WaitPageChange("scheduletitle")):
+        try:
+            WebDriverWait(self.browser,8).until(EC.presence_of_all_elements_located((By.CLASS_NAME,'scheduletitle')))
+            time.sleep(self.sleeping_time)
+        except:
             return 0
         
-    
     # 특정 한 학기의 특정 한 과목의 학업 참여도를 종합하여 반환한다. (팀플, 과제, 퀴즈, 출석율)
     # 가장 최근 학기부터 첫 학기 순으로 반환한다.
     def GetEachSubjectsData(self, xpath):
         
-        # 만약 e-learing이면 0000000 반환하고 걍 패쓰
-        if (not self.WaitPageChange_Xpath(xpath+"/div[2]/button[1]")):
-            return [0,0,0,0,0,0,0,0,0]
+        # # 만약 e-learing이면 0000000 반환하고 걍 패쓰
+        # if (self.WaitPageChange_Xpath(xpath+"/div[2]/button")):
+        #     return [0,0,0,0,0,0,0,0,0]
         
         self.browser.find_element(By.XPATH,xpath).click()
-        self.WaitPageChange('oval')
+        
+        try:
+            WebDriverWait(self.browser,8).until(EC.presence_of_all_elements_located((By.CLASS_NAME,'oval')))
+            time.sleep(self.sleeping_time)
+        except:
+            return 0
         
         html = self.browser.page_source
         soup = BeautifulSoup(html, 'lxml')
@@ -231,12 +247,13 @@ class Scraper:
         
         return res
     
-    
-    
     # 성적정보를 가져온다.
     # 가장 최근 학기부터 첫 학기 순으로 반환한다.
     def ScrapingGradeData(self):
-        if(not self.WaitPageChange("scheduletitle")):
+        try:
+            WebDriverWait(self.browser,8).until(EC.presence_of_all_elements_located((By.CLASS_NAME,"scheduletitle")))
+            time.sleep(self.sleeping_time)
+        except:
             return 0
         
         self.browser.find_element(By.XPATH,"/html/body/header/div[1]/div/div[1]/button").click()
@@ -320,7 +337,7 @@ class Scraper:
     
     # 어떤 class 이름을 입력으로 주면 해당 class 이름이 현재 url 페이지에 나타날 때까지 기다린다.
     # 10 초 안에 나타나면 데이터 로드할 시간을 좀 더 주고 True 반환, 10 초 이상 안나타나며 False 반환
-    def WaitPageChange(self,class_name,term=10):
+    def WaitPageChange(self,class_name,term=8):
         try:
             WebDriverWait(self.browser,term).until(EC.presence_of_all_elements_located((By.CLASS_NAME,class_name)))
             time.sleep(self.sleeping_time)
@@ -328,7 +345,7 @@ class Scraper:
             return False
         return True
     
-    def WaitPageChange_Xpath(self,xpath_name,term=10):
+    def WaitPageChange_Xpath(self,xpath_name,term=8):
         try:
             WebDriverWait(self.browser,term).until(EC.presence_of_all_elements_located((By.XPATH,xpath_name)))
             time.sleep(self.sleeping_time)

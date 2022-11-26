@@ -21,15 +21,15 @@
 # 프로젝트 설명
 (* 광운대학교 2022년 2학기 <오픈소스소프트웨어개발> 교과목의 14조 팀프로젝트 결과물입니다. )
 
+ - 프로젝트 제안서: [[14조]프로젝트_제안서.pdf](https://github.com/oss01-SourceFree/KlasCroller/files/10095838/14._.pdf)
+ - 프로젝트 중간보고서: [[14조]중간보고서.pdf](https://github.com/oss01-SourceFree/KlasCroller/files/10095834/14.pdf)
+ - 프로젝트 최종보고서:
+
 광운대학교 학부생들이 학업 성취도에 대한 진단을 스스로 할 수 있도록 Window 기반 GUI 프로그램을 만들었습니다.
 
 KLAS(광운대학교 웹 어플리케이션) 로그인 시 사용하는 id,pw를 입력받아, 학부생의 학업 성취 데이터를 추출하여 파라미터를 구성합니다.
 
 사용자의 요청에 따라 파라미터를 기준으로 다양한 기능을 수행 합니다.
-
- - 프로젝트 제안서: [[14조]프로젝트_제안서.pdf](https://github.com/oss01-SourceFree/KlasCroller/files/10095838/14._.pdf)
- - 프로젝트 중간보고서: [[14조]중간보고서.pdf](https://github.com/oss01-SourceFree/KlasCroller/files/10095834/14.pdf)
- - 프로젝트 최종보고서:
 
 
 ## [프로젝트 기간] 
@@ -164,7 +164,7 @@ _++사용자의 단점이 부각된 형용어 : ['노력상실', '우둔한', '�
 
 
 
-- 사용자로부터 관심있는 진로 분야를 입력받아, '잡코리아'(https://www.jobkorea.co.kr/)로 연결
+- 사용자로부터 관심있는 진로 분야를 입력받아, '잡코리아'(https://www.jobkorea.co.kr/) 로 연결
 
 
 - 사용자 요청에 따른 cache file 초기화
@@ -187,7 +187,7 @@ _++사용자의 단점이 부각된 형용어 : ['노력상실', '우둔한', '�
    
 6. 'main.py' 실행
 
-    -> [ Ctrl+<Alt>+N ] OR [ 왼쪽 마우스 클릭 + 'Run Code' ]
+    -> [ Ctrl + Alt + N ] or [ 왼쪽 마우스 클릭 + 'Run Code' ]
 
 
 ## [사용법]

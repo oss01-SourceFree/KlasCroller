@@ -245,6 +245,6 @@ cache file 이 삭제되고, 프로그램이 종료 됩니다.
 
 ## [코드 인용]
 
-※  main.py(19 ~ 27), displaying.py(22 ~ 30)  사용된 resource_path() 는 리소스 파일의 상대경로를 입력받아 로컬PC에서의 절대경로를 반환해주는 함수로서 아래의 블로그에서 인용한 코드임을 밝힙니다.
+※  main.py(20 ~ 28), displaying.py(23 ~ 31)  사용된 resource_path() 는 리소스 파일의 상대경로를 입력받아 로컬PC에서의 절대경로를 반환해주는 함수로서 아래의 블로그에서 인용한 코드임을 밝힙니다.
 
 출처: https://stackoverflow.com/questions/7674790/bundling-data-files-with-pyinstaller-onefile 

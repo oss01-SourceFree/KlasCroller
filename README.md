@@ -24,6 +24,8 @@ _* 광운대학교 2022년 2학기 <오픈소스소프트웨어개발> 교과목
  - 제안서: [[14조]프로젝트_제안서.pdf](https://github.com/oss01-SourceFree/KlasCroller/files/10095838/14._.pdf)
  - 중간보고서: [[14조]중간보고서.pdf](https://github.com/oss01-SourceFree/KlasCroller/files/10095834/14.pdf)
  - 최종보고서: [[14조]최종_보고서.pdf](https://github.com/oss01-SourceFree/KlasCroller/files/10096442/14._.pdf)
+ 
+ - 시연영상 : https://youtu.be/j6hC-xBA_TI
 
 
 광운대학교 학부생들이 학업 성취도에 대한 진단을 스스로 할 수 있도록 Window 기반 GUI 프로그램을 만들었습니다.
@@ -238,3 +240,11 @@ cache file 이 삭제되고, 프로그램이 종료 됩니다.
 <div align="center", float= "left">
 <img width="30%" src="https://user-images.githubusercontent.com/50646145/204079404-0fc7096a-2954-4301-a777-bb74b63d0fc0.png"/>
 </div>
+
+
+
+## [코드 인용]
+
+※  main.py(19 ~ 27), displaying.py(22 ~ 30)  사용된 resource_path() 는 리소스 파일의 상대경로를 입력받아 로컬PC에서의 절대경로를 반환해주는 함수로서 아래의 블로그에서 인용한 코드임을 밝힙니다.
+
+출처: https://stackoverflow.com/questions/7674790/bundling-data-files-with-pyinstaller-onefile 

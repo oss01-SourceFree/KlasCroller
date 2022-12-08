@@ -19,6 +19,7 @@ matplotlib.rcParams['axes.unicode_minus'] = False
 from caching import CacheManager
 
 # 상대 경로 -> 절대 경로
+# 출처: https://stackoverflow.com/questions/7674790/bundling-data-files-with-pyinstaller-onefile
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
     try:
